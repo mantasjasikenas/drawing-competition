@@ -1,0 +1,39 @@
+version: "2"
+services:
+    www:
+        build: .
+        ports: 
+            - "8001:80"
+        volumes:
+            - ./www:/var/www/html/
+        links:
+            - db
+        networks:
+            - default
+    db:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        ports: 
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: drawing_comp
+            MYSQL_USER: manjas1
+            MYSQL_PASSWORD: manjas1
+            MYSQL_ROOT_PASSWORD: manjas1
+        volumes:
+            - ./dump:/docker-entrypoint-initdb.d
+            - persistent:/var/lib/mysql
+        networks:
+            - default
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links: 
+            - db:db
+        ports:
+            - 8000:80
+        environment:
+            MYSQL_USER: manjas1
+            MYSQL_PASSWORD: manjas1
+            MYSQL_ROOT_PASSWORD: manjas1
+volumes:
+    persistent:
