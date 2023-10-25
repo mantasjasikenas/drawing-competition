@@ -12,10 +12,11 @@ if (isset($session) && $session->logged_in) {
         echo "<tr><td>";
         echo "Prisijungęs vartotojas: <b>$session->username</b> <br>";
         echo "</td></tr><tr><td>";
-        echo "[<a href=\"" . $path . "userinfo.php?user=$session->username\">Mano paskyra</a>] &nbsp;&nbsp;"
-        . "[<a href=\"" . $path . "useredit.php\">Redaguoti paskyrą</a>] &nbsp;&nbsp;"
-        . "[<a href=\"" . $path . "operacija1.php\">Demo operacija1</a>] &nbsp;&nbsp;"
-        . "[<a href=\"" . $path . "operacija2.php\">Demo operacija2</a>] &nbsp;&nbsp;";
+        echo "[<a href=\"" . $path . "index.php\">Pagrindinis puslapis</a>] &nbsp;&nbsp;"
+            . "[<a href=\"" . $path . "userinfo.php?user=$session->username\">Mano paskyra</a>] &nbsp;&nbsp;"
+            . "[<a href=\"" . $path . "useredit.php\">Redaguoti paskyrą</a>] &nbsp;&nbsp;"
+            . "[<a href=\"" . $path . "operacija1.php\">Demo operacija1</a>] &nbsp;&nbsp;"
+            . "[<a href=\"" . $path . "operacija2.php\">Demo operacija2</a>] &nbsp;&nbsp;";
         //Trečia operacija rodoma valdytojui ir administratoriui
         if ($session->isManager() || $session->isAdmin()) {
             echo "[<a href=\"" . $path . "operacija3.php\">Demo operacija3</a>] &nbsp;&nbsp;";

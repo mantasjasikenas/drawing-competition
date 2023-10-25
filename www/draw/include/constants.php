@@ -36,11 +36,12 @@ define("TBL_BANNED_USERS", "banned_users");
  * Levels must be digits between 0-9.
  */
 define("ADMIN_NAME", "Administratorius");
-define("MANAGER_NAME", "Valdytojas");
+define("EVALUATOR_NAME", "Vertintojas");
 define("USER_NAME", "Vartotojas");
 define("GUEST_NAME", "Svečias");
+
 define("ADMIN_LEVEL", 9);
-define("MANAGER_LEVEL", 5);
+define("EVALUATOR_LEVEL", 5);
 define("USER_LEVEL", 1);
 define("GUEST_LEVEL", 0);
 

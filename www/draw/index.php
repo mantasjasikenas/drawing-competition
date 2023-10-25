@@ -1,16 +1,24 @@
 <?php
+global $form, $session;
 include("include/session.php");
 ?>
 <html>
-    <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=9; text/html; charset=utf-8"/>
-        <title>Demo projektas</title>
-        <link href="include/styles.css" rel="stylesheet" type="text/css" />
-    </head>
-    <body>             
-        <table class="center" ><tr><td>
-            <center><img src="pictures/top.png"/></center>
-        </td></tr><tr><td>  
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9; text/html; charset=utf-8"/>
+    <title>Piešinių konkursas</title>
+    <link href="include/styles.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<table class="center">
+    <tr>
+        <td>
+            <?php
+            include('components/header.html');
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
             <?php
             //Jei vartotojas prisijungęs
             if ($session->logged_in) {
@@ -19,6 +27,7 @@ include("include/session.php");
                 <div style="text-align: center;color:green">
                     <br><br>
                     <h1>Pradinis sistemos puslapis (index.php).</h1>
+                    <br><br>
                 </div><br>
                 <?php
                 //Jei vartotojas neprisijungęs, rodoma prisijungimo forma
@@ -36,7 +45,8 @@ include("include/session.php");
             include("include/footer.php");
             echo "</td></tr>";
             ?>
-        </td></tr>
+        </td>
+    </tr>
 </table>
 </body>
 </html>

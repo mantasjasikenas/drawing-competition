@@ -7,10 +7,11 @@ include("../include/session.php");
  * displayUsers - Displays the users database table in
  * a nicely formatted html table.
  */
-function displayUsers() {
+function displayUsers()
+{
     global $database;
     $q = "SELECT username,userlevel,email,timestamp "
-            . "FROM " . TBL_USERS . " ORDER BY userlevel DESC,username";
+        . "FROM " . TBL_USERS . " ORDER BY userlevel DESC,username";
     $result = $database->query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysqli_num_rows($result);
@@ -30,13 +31,12 @@ function displayUsers() {
         $uname = mysqli_result($result, $i, "username");
         $ulevel = mysqli_result($result, $i, "userlevel");
         $ulevelname = '';
-        switch ($ulevel)
-        {
+        switch ($ulevel) {
             case ADMIN_LEVEL:
                 $ulevelname = ADMIN_NAME;
                 break;
-            case MANAGER_LEVEL:
-                $ulevelname = MANAGER_NAME;
+            case EVALUATOR_LEVEL:
+                $ulevelname = EVALUATOR_NAME;
                 break;
             case USER_LEVEL:
                 $ulevelname = USER_NAME;
@@ -49,12 +49,12 @@ function displayUsers() {
         $time = date("Y-m-d G:i", mysqli_result($result, $i, "timestamp"));
         $ulevelchange = '<form action="adminprocess.php" method="POST">
                         
-                                <input type="hidden" name="upduser" value="'.$uname.'">
+                                <input type="hidden" name="upduser" value="' . $uname . '">
                                 <input type="hidden" name="subupdlevel" value="1">
                                 <select name="updlevel" onChange="alert(\'Pakeistas vartotojo lygis!\');submit();">
-                                    <option value="'.USER_LEVEL.'" '.($ulevel == USER_LEVEL? 'selected':'').'>'.USER_NAME.'</option>
-                                    <option value="'.MANAGER_LEVEL.'" '.($ulevel == MANAGER_LEVEL? 'selected':'').'>'.MANAGER_NAME.'</option>
-                                    <option value="'.ADMIN_LEVEL.'" '.($ulevel == ADMIN_LEVEL? 'selected':'').'>'.ADMIN_NAME.'</option>
+                                    <option value="' . USER_LEVEL . '" ' . ($ulevel == USER_LEVEL ? 'selected' : '') . '>' . USER_NAME . '</option>
+                                    <option value="' . EVALUATOR_LEVEL . '" ' . ($ulevel == EVALUATOR_LEVEL ? 'selected' : '') . '>' . EVALUATOR_NAME . '</option>
+                                    <option value="' . ADMIN_LEVEL . '" ' . ($ulevel == ADMIN_LEVEL ? 'selected' : '') . '>' . ADMIN_NAME . '</option>
                                 </select>
                                 
 
@@ -64,19 +64,22 @@ function displayUsers() {
     echo "</table><br>\n";
 }
 
-function mysqli_result($res, $row, $field=0) { 
-    $res->data_seek($row); 
-    $datarow = $res->fetch_array(); 
-    return $datarow[$field]; 
-} 
+function mysqli_result($res, $row, $field = 0)
+{
+    $res->data_seek($row);
+    $datarow = $res->fetch_array();
+    return $datarow[$field];
+}
+
 /**
  * displayBannedUsers - Displays the banned users
  * database table in a nicely formatted html table.
  */
-function displayBannedUsers() {
+function displayBannedUsers()
+{
     global $database;
     $q = "SELECT username,timestamp "
-            . "FROM " . TBL_BANNED_USERS . " ORDER BY username";
+        . "FROM " . TBL_BANNED_USERS . " ORDER BY username";
     $result = $database->query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysqli_num_rows($result);
@@ -99,13 +102,14 @@ function displayBannedUsers() {
     echo "</table><br>\n";
 }
 
-function ViewActiveUsers() {
+function ViewActiveUsers()
+{
     global $database;
     if (!defined('TBL_ACTIVE_USERS')) {
         die("");
     }
     $q = "SELECT username FROM " . TBL_ACTIVE_USERS
-            . " ORDER BY timestamp DESC,username";
+        . " ORDER BY timestamp DESC,username";
     $result = $database->query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysqli_num_rows($result);
@@ -130,70 +134,98 @@ function ViewActiveUsers() {
 if (!$session->isAdmin()) {
     header("Location: ../index.php");
 } else { //Jei administratorius
-	date_default_timezone_set("Europe/Vilnius");
+    date_default_timezone_set("Europe/Vilnius");
     ?>
     <html>
-        <head>  
-            <meta http-equiv="X-UA-Compatible" content="IE=9; text/html; charset=utf-8"/> 
-            <title>Administratoriaus sąsaja</title>
-            <link href="../include/styles.css" rel="stylesheet" type="text/css" />
-        </head>  
-        <body>
-            <table class="center"><tr><td>
-                        <img src="../pictures/top.png"/>
-                    </td></tr><tr><td> 
-                        <?php
-                        $_SESSION['path'] = '../';
-                        include("../include/meniu.php");
-                        //Nuoroda į pradžią
-                        ?>
-                        <table style="border-width: 2px; border-style: dotted;"><tr><td>
-                                    Atgal į [<a href="../index.php">Pradžia</a>]
-                                </td></tr></table>               
-                        <br> 
-                        <?php
-                        if ($form->num_errors > 0) {
-                            echo "<font size=\"4\" color=\"#ff0000\">"
-                            . "!*** Error with request, please fix</font><br><br>";
-                        }
-                        ?>
-                        <table style=" text-align:left;" border="0" cellspacing="5" cellpadding="5">
-                            <tr><td>
-                                    <?php
-                                    /**
-                                     * Display Users Table
-                                     */
-                                    ?>
-                                    <h3>Sistemos vartotojai:</h3>
-                                    <?php
-                                    displayUsers();
-                                    ?>
-                                    <br>
-                                </td>
-                            </tr>
-                            <tr><td><hr></td></tr>           
-        <tr><td>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=9; text/html; charset=utf-8"/>
+        <title>Administratoriaus sąsaja</title>
+        <link href="../include/styles.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+    <table class="center">
+        <tr>
+            <td>
                 <?php
-                /**
-                 * Display Banned Users Table
-                 */
+                include('../components/header.html');
                 ?>
-                <h3>Blokuoti vartotojai:</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <?php
-                displayBannedUsers();
+                $_SESSION['path'] = '../';
+                include("../include/meniu.php");
+                //Nuoroda į pradžią
                 ?>
+                <table style="border-width: 2px; border-style: dotted;">
+                    <tr>
+                        <td>
+                            Atgal į [<a href="../index.php">Pradžia</a>]
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <?php
+                if ($form->num_errors > 0) {
+                    echo "<font size=\"4\" color=\"#ff0000\">"
+                        . "!*** Error with request, please fix</font><br><br>";
+                }
+                ?>
+                <table style=" text-align:left;" border="0" cellspacing="5" cellpadding="5">
+                    <tr>
+                        <td>
+                            <?php
+                            /**
+                             * Display Users Table
+                             */
+                            ?>
+                            <h3>Sistemos vartotojai:</h3>
+                            <?php
+                            displayUsers();
+                            ?>
+                            <br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <hr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php
+                            /**
+                             * Display Banned Users Table
+                             */
+                            ?>
+                            <h3>Blokuoti vartotojai:</h3>
+                            <?php
+                            displayBannedUsers();
+                            ?>
 
-            </td></tr>
-                            <tr><td><hr></td></tr>
-                    </td></tr>
-                        
-                <tr><td> 
-                        <h3>Šiuo metu prisijungę vartotojai:</h3>
-                        <?php
-                        ViewActiveUsers();
-                        ?>
-                <tr><td><hr></td></tr>
-            </td></tr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <hr>
+                        </td>
+                    </tr>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <h3>Šiuo metu prisijungę vartotojai:</h3>
+                <?php
+                ViewActiveUsers();
+                ?>
+        <tr>
+            <td>
+                <hr>
+            </td>
+        </tr>
+        </td></tr>
         <tr>
             <td>
                 <?php
@@ -204,7 +236,8 @@ if (!$session->isAdmin()) {
                 <h3>Šalinti neaktyvius vartotojus</h3>
                 <table>
                     <form action="adminprocess.php" method="POST">
-                        <tr><td>
+                        <tr>
+                            <td>
                                 Neaktyvumo dienos:<br>
                                 <select name="inactdays">
                                     <option value="3">3
@@ -224,7 +257,7 @@ if (!$session->isAdmin()) {
                 </table>
             </td>
         </tr>
-        
+
     </table>
     </td></tr>
     <?php
@@ -232,7 +265,7 @@ if (!$session->isAdmin()) {
     include("../include/footer.php");
     echo "</td></tr>";
     ?>
-    </table>       
+    </table>
     </body>
     </html>
     <?php

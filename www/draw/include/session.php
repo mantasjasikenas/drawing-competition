@@ -402,7 +402,7 @@ class Session {
     }
 
     function isManager() {
-        return ($this->userlevel == MANAGER_LEVEL);
+        return ($this->userlevel == EVALUATOR_LEVEL);
     }
 
     /**

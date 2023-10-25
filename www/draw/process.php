@@ -2,33 +2,29 @@
 
 include("include/session.php");
 
-class Process {
+class Process
+{
     /* Class constructor */
 
-    function Process() {
+    function Process()
+    {
         global $session;
         /* User submitted login form */
         if (isset($_POST['sublogin'])) {
             $this->procLogin();
-        }
-        /* User submitted registration form */ else if (isset($_POST['subjoin'])) {
+        } /* User submitted registration form */ else if (isset($_POST['subjoin'])) {
             $this->procRegister();
-        }
-        
-        /* User submitted forgot password form */ else if (isset($_POST['subforgot'])) {
+        } /* User submitted forgot password form */ else if (isset($_POST['subforgot'])) {
             $this->procForgotPass();
-        }
-        /* User submitted edit account form */ else if (isset($_POST['subedit'])) {
+        } /* User submitted edit account form */ else if (isset($_POST['subedit'])) {
             $this->procEditAccount();
-        }
-        /**
+        } /**
          * The only other reason user should be directed here
          * is if he wants to logout, which means user is
          * logged in currently.
          */ else if ($session->logged_in) {
             $this->procLogout();
-        }
-        /**
+        } /**
          * Should not get here, which means user is viewing this page
          * by mistake and therefore is redirected.
          */ else {
@@ -41,7 +37,8 @@ class Process {
      * are found, the user is redirected to correct the information,
      * if not, the user is effectively logged in to the system.
      */
-    function procLogin() {
+    function procLogin()
+    {
         global $session, $form;
         /* Login attempt */
         $retval = $session->login($_POST['user'], $_POST['pass'], isset($_POST['remember']));
@@ -50,8 +47,7 @@ class Process {
         if ($retval) {
             $session->logged_in = 1;
             header("Location: " . $session->referrer);
-        }
-        /* Login failed */ else {
+        } /* Login failed */ else {
             $session->logged_in = null;
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
@@ -63,12 +59,13 @@ class Process {
      * procLogout - Simply attempts to log the user out of the system
      * given that there is no logout form to process.
      */
-    function procLogout() {
+    function procLogout()
+    {
         global $session;
         $retval = $session->logout();
         header("Location: index.php");
     }
- 
+
     /**
      * procRegister - Processes the user submitted registration form,
      * if errors are found, the user is redirected to correct the
@@ -76,7 +73,8 @@ class Process {
      * the system and an email is (optionally) sent to the newly
      * created user.
      */
-    function procRegister() {
+    function procRegister()
+    {
         global $session, $form;
         /* Convert username to all lowercase (by option) */
         if (ALL_LOWERCASE) {
@@ -90,13 +88,11 @@ class Process {
             $_SESSION['reguname'] = $_POST['user'];
             $_SESSION['regsuccess'] = true;
             header("Location: " . $session->referrer);
-        }
-        /* Error found with form */ else if ($retval == 1) {
+        } /* Error found with form */ else if ($retval == 1) {
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
             header("Location: " . $session->referrer);
-        }
-        /* Registration attempt failed */ else if ($retval == 2) {
+        } /* Registration attempt failed */ else if ($retval == 2) {
             $_SESSION['reguname'] = $_POST['user'];
             $_SESSION['regsuccess'] = false;
             header("Location: " . $session->referrer);
@@ -108,7 +104,8 @@ class Process {
      * everything is fine, a new password is generated and
      * emailed to the address the user gave on sign up.
      */
-    function procForgotPass() {
+    function procForgotPass()
+    {
         global $database, $session, $mailer, $form;
         /* Username error checking */
         $subuser = $_POST['user'];
@@ -119,8 +116,8 @@ class Process {
             /* Make sure username is in database */
             $subuser = stripslashes($subuser);
             if (strlen($subuser) < 5 || strlen($subuser) > 30 ||
-                    !eregi("^([0-9a-z])+$", $subuser) ||
-                    (!$database->usernameTaken($subuser))) {
+                !eregi("^([0-9a-z])+$", $subuser) ||
+                (!$database->usernameTaken($subuser))) {
                 $form->setError($field, "* Vartotojas neegzistuoja<br>");
             }
         }
@@ -129,8 +126,7 @@ class Process {
         if ($form->num_errors > 0) {
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
-        }
-        /* Generate new password and email it to user */ else {
+        } /* Generate new password and email it to user */ else {
             /* Generate new password */
             $newpass = $session->generateRandStr(8);
 
@@ -143,8 +139,7 @@ class Process {
                 /* Email sent, update database */
                 $database->updateUserField($subuser, "password", md5($newpass));
                 $_SESSION['forgotpass'] = true;
-            }
-            /* Email failure, do not change password */ else {
+            } /* Email failure, do not change password */ else {
                 $_SESSION['forgotpass'] = false;
             }
         }
@@ -157,7 +152,8 @@ class Process {
      * information, including the password, which must be verified
      * before a change is made.
      */
-    function procEditAccount() {
+    function procEditAccount()
+    {
         global $session, $form;
         /* Account edit attempt */
         $retval = $session->editAccount($_POST['curpass'], $_POST['newpass'], $_POST['email']);
@@ -166,8 +162,7 @@ class Process {
         if ($retval) {
             $_SESSION['useredit'] = true;
             header("Location: " . $session->referrer);
-        }
-        /* Error found with form */ else {
+        } /* Error found with form */ else {
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
             header("Location: " . $session->referrer);
