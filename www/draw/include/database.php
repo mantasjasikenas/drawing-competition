@@ -139,7 +139,7 @@ class MySQLDB
      * info into the database. Appropriate user level is set.
      * Returns true on success, false otherwise.
      */
-    function addNewUser($username, $password, $email)
+    function addNewUser($username, $password, $email, $birth_date)
     {
         $time = time();
         /* If admin sign up, give admin user level */
@@ -148,7 +148,9 @@ class MySQLDB
         } else {
             $ulevel = USER_LEVEL;
         }
-        $q = "INSERT INTO " . TBL_USERS . " VALUES ('$username', '$password', '0', $ulevel, '$email', $time)";
+
+//        INSERT INTO " . TBL_USERS . " VALUES ('$username', '$password', '0', $ulevel, '$email', $time)";
+        $q = "INSERT INTO users (username, password, email, userlevel, birth_date, timestamp) VALUES ('$username', '$password', '$email', $ulevel, '$birth_date', $time)";
         return mysqli_query($this->connection, $q);
     }
 
@@ -308,7 +310,7 @@ class MySQLDB
         return mysqli_query($this->connection, $query);
     }
 
-    function getCurrentCompetitionPaitings()
+    function getCurrentCompetitionPaintings(): ?array
     {
         $cur = $this->getCurrentCompetition();
 
@@ -334,6 +336,40 @@ class MySQLDB
         }
         /* Return result array */
         return mysqli_fetch_array($result);
+    }
+
+    function getTop10Paintings(): ?array
+    {
+//        TODO: get top 10 paintings
+
+        $q = "SELECT * FROM paintings LIMIT 10";
+        $result = mysqli_query($this->connection, $q);
+
+        /* Error occurred, return given name by default */
+        if (!$result || (mysqli_num_rows($result) < 1)) {
+            return NULL;
+        }
+        /* Return result array */
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    function getUnratedPaintingsByUser($username): ?array
+    {
+        $q = "SELECT * FROM paintings";
+        $result = mysqli_query($this->connection, $q);
+
+        /* Error occurred, return given name by default */
+        if (!$result || (mysqli_num_rows($result) < 1)) {
+            return NULL;
+        }
+        /* Return result array */
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    function addNewCompetion($topic, $start_date, $end_date)
+    {
+        $q = "INSERT INTO competitions (topic, start_date, end_date, creation_date) VALUES ('$topic', '$start_date', '$end_date', NOW())";
+        return mysqli_query($this->connection, $q);
     }
 
 }

@@ -45,34 +45,30 @@ if ($session->logged_in && ($session->isAdmin() || $session->isEvaluator())) {
 
                 <div style="padding: 10px">
                     <?php
-                    $dir = "uploads/";
-                    $unrated_images = glob($dir . "*.{jpg,png,gif,svg}", GLOB_BRACE);
-                    $unrated_images = array_slice($unrated_images, 0, 5);
 
-                    if (count($unrated_images) == 0) {
+                    $result = $database->getUnratedPaintingsByUser($session->username);
+
+
+                    if (!($result && count($result) > 0)) {
                         echo '<h2 style="margin-top: unset; color: red; text-align: center">Nėra neįvertintų paveikslėlių</h2>';
                     } else {
-//                        echo '<h2 style="margin-top: unset; text-align: center">Geriausi 10 darbų</h2>';
-
                         echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
 
-//                        add images to select radio buttons
+                        $i = 0;
 
+                        foreach ($result as $row) {
+                            $imageData = $row['image'];
 
-                        for ($i = 0; $i < count($unrated_images); $i++) {
                             echo '<div style="padding: 6px;">';
-
-                            echo '<input type="radio" id="image' . $i . '" name="image" value="' . $unrated_images[$i] . '">';
-
-                            echo '<label for="image' . $i . '">
-                                    <img height="200" src="' . $unrated_images[$i] . '" />
-                                  </label>';
-
-
-                            $image_name = basename($unrated_images[$i]);
+                            echo '<input type="radio" id="image' . $i . '" name="image" />'; // value="' . $unrated_images[$i] . '">';
+                            echo '<label for="image' . $i . '">';
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 200px;">';
+                            echo '</label>';
 
 
                             echo '</div>';
+
+                            $i++;
                         }
 
 
@@ -80,7 +76,7 @@ if ($session->logged_in && ($session->isAdmin() || $session->isEvaluator())) {
 
                         echo "<div style=' padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: center'>
                                 <form method='POST' action='handle_review.php' style='justify-content: center'>
-                                    <input type='hidden' name='image_name' value='" . $image_name . "'>
+                                    <input type='hidden' name='image_name' />  
                                     
                                     <label for='vol'>Kompozicija:</label><br>
                                     <input type='range' id='vol' name='vol' min='0' max='10'><br><br>

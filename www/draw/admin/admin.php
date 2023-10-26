@@ -147,11 +147,13 @@ function displayBannedUsers()
 }
 
 
-function createNewDrawingCompetion()
+function createNewDrawingCompetition()
 {
     echo '<form action="adminprocess.php" method="POST">
+            <input type="hidden" name="create_comp">
+
             <label for="name">Konkurso tema:</label><br>
-            <input type="text" id="name" name="name" required><br><br>
+            <input type="text" id="name" name="topic" required><br><br>
             
             <label for="start_date">Pradžios data:</label><br>
             <input type="date" id="start_date" name="start_date" required><br><br>
@@ -260,7 +262,7 @@ if (!$session->isAdmin()) {
                             ?>
                             <h3>Pridėti naują konkursą:</h3>
                             <?php
-                            createNewDrawingCompetion();
+                            createNewDrawingCompetition();
                             ?>
                             <br>
                         </td>

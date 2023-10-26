@@ -1,5 +1,5 @@
 <?php
-global $database;
+global $database, $session;
 include("include/session.php");
 if ($session->logged_in) {
     ?>
@@ -44,21 +44,21 @@ if ($session->logged_in) {
 
                 <div style="padding: 10px">
                     <?php
-                    $dir = "uploads/";
-                    $images = glob($dir . "*.{jpg,png,gif,svg}", GLOB_BRACE);
+                    $result = $database->getTop10Paintings();
 
-                    if (count($images) == 0) {
-                        echo '<h2 style="margin-top: unset; color: red; text-align: center">Nėra pateiktų paveikslėlių</h2>';
-                    } else {
+                    if ($result && count($result) > 0) {
                         echo '<h2 style="margin-top: unset; text-align: center">Geriausi 10 darbų</h2>';
 
                         echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
 
-                        for ($i = 0; $i < 10; $i++) {
-                            echo '<img height="200" src="' . $images[$i] . '" /><br />';
+                        foreach ($result as $row) {
+                            $imageData = $row['image'];
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px;">';
                         }
 
                         echo '</div>';
+                    } else {
+                        echo '<h2 style="margin-top: unset; color: red; text-align: center">Nėra pateiktų paveikslėlių</h2>';
                     }
 
                     ?>

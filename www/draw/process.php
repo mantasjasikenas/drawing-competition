@@ -81,7 +81,7 @@ class Process
             $_POST['user'] = strtolower($_POST['user']);
         }
         /* Registration attempt */
-        $retval = $session->register($_POST['user'], $_POST['pass'], $_POST['email']);
+        $retval = $session->register($_POST['user'], $_POST['pass'], $_POST['email'], $_POST['birth_date']);
 
         /* Registration Successful */
         if ($retval == 0) {
@@ -156,7 +156,7 @@ class Process
     {
         global $session, $form;
         /* Account edit attempt */
-        $retval = $session->editAccount($_POST['curpass'], $_POST['newpass'], $_POST['email']);
+        $retval = $session->editAccount($_POST['curpass'], $_POST['newpass'], $_POST['email'], $_POST['birth_date']);
 
         /* Account edit successful */
         if ($retval) {

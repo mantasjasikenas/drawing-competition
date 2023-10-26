@@ -236,7 +236,7 @@ class Session
      * 1. If no errors were found, it registers the new user and
      * returns 0. Returns 2 if registration failed.
      */
-    function register($subuser, $subpass, $subemail)
+    function register($subuser, $subpass, $subemail, $subbirth_date)
     {
         global $database, $form, $mailer;  //The database, form and mailer object
 
@@ -299,11 +299,22 @@ class Session
             $subemail = stripslashes($subemail);
         }
 
+        /* Birth date error checking */
+        $field = "birth_date";  //Use field name for birth date
+        if (!$subbirth_date || strlen($subbirth_date = trim($subbirth_date)) == 0) {
+            $form->setError($field, "* Neįvesta gimimo data");
+        } else {
+//           check if older than today date
+            if (strtotime($subbirth_date) > strtotime(date("Y-m-d"))) {
+                $form->setError($field, "* Gimimo data negali būti ateityje");
+            }
+        }
+
         /* Errors exist, have user correct them */
         if ($form->num_errors > 0) {
             return 1;  //Errors with form
         } /* No errors, add the new account to the */ else {
-            if ($database->addNewUser($subuser, md5($subpass), $subemail)) {
+            if ($database->addNewUser($subuser, md5($subpass), $subemail, $subbirth_date)) {
                 if (EMAIL_WELCOME) {
                     $mailer->sendWelcome($subuser, $subemail, $subpass);
                 }
@@ -321,7 +332,7 @@ class Session
      * format, the change is made. All other fields are changed
      * automatically.
      */
-    function editAccount($subcurpass, $subnewpass, $subemail)
+    function editAccount($subcurpass, $subnewpass, $subemail, $subbirth_date)
     {
         global $database, $form;  //The database and form object
         /* New password entered */
@@ -374,6 +385,15 @@ class Session
             $subemail = stripslashes($subemail);
         }
 
+        /* Birth date error checking */
+        $field = "birth_date";  //Use field name for birth date
+        if ($subbirth_date && strlen($subbirth_date = trim($subbirth_date)) > 0) {
+//           check if older than today date
+            if (strtotime($subbirth_date) > strtotime(date("Y-m-d"))) {
+                $form->setError($field, "* Gimimo data negali būti ateityje");
+            }
+        }
+
         /* Errors exist, have user correct them */
         if ($form->num_errors > 0) {
             return false;  //Errors with form
@@ -387,6 +407,11 @@ class Session
         /* Change Email */
         if ($subemail) {
             $database->updateUserField($this->username, "email", $subemail);
+        }
+
+        /* Change Birth date */
+        if ($subbirth_date) {
+            $database->updateUserField($this->username, "birth_date", $subbirth_date);
         }
 
         /* Success! */

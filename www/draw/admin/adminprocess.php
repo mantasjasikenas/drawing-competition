@@ -25,6 +25,8 @@ class AdminProcess
             $this->procBanUser();
         } /* Admin submitted delete banned user form */ else if (isset($_GET['db'])) {
             $this->procDeleteBannedUser();
+        } else if (isset($_POST['create_comp'])) {
+            $this->procCreateComp();
         } /* Should not get here, redirect to home page */ else {
             header("Location: ../index.php");
         }
@@ -137,6 +139,20 @@ class AdminProcess
             $database->query($q);
             header("Location: " . $session->referrer);
         }
+    }
+
+    function procCreateComp()
+    {
+        global $session;
+        $topic = $_POST['topic'];
+        $start_date = $_POST['start_date'];
+        $end_date = $_POST['end_date'];
+
+        global $database, $form;
+
+        $database->addNewCompetion($topic, $start_date, $end_date);
+
+        header("Location: " . $session->referrer);
     }
 
     /**

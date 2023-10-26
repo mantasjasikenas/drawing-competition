@@ -1,5 +1,5 @@
 <?php
-global $session;
+global $session, $form;
 include("include/session.php");
 if ($session->logged_in) {
     header("Location: index.php");
@@ -74,6 +74,10 @@ if ($session->logged_in) {
                                         <p style="text-align:left;">E-paštas:
                                             <input class="s1" name="email" type="text" size="15"
                                                    value="<?php echo $form->value("email"); ?>"/><br><?php echo $form->error("email"); ?>
+                                        </p>
+                                        <p style="text-align:left;">Gimimo data:
+                                            <input class="s1" name="birth_date" type="date" size="15"
+                                                   value="<?php echo $form->value("birth_date"); ?>"/><br><?php echo $form->error("birth_date"); ?>
                                         </p>
                                         <p style="text-align:left;">
                                             <input type="hidden" name="subjoin" value="1">

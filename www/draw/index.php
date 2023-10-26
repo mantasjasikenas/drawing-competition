@@ -35,9 +35,8 @@ include("include/session.php");
                     echo '<h3 style="margin-top: unset; color: rgba(50,194,137,0.62)">' . $topic . '</h3>';
 
 
-                    $result = $database->getCurrentCompetitionPaitings();
+                    $result = $database->getCurrentCompetitionPaintings();
 
-                    //                    print_r($result);
                     if ($result && count($result) > 0) {
 
                         echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';

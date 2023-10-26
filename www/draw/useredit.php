@@ -1,4 +1,5 @@
 <?php
+global $session, $form;
 include("include/session.php");
 if ($session->logged_in) {
     ?>
@@ -66,6 +67,16 @@ if ($session->logged_in) {
                                             echo $form->value("email");
                                         }
                                         ?>"> <br><?php echo $form->error("email"); ?></p>
+
+                                    <p>Gimimo data:<br>
+                                        <input type="date" name="birth_date" maxlength="30" size="25" value="<?php
+                                        if ($form->value("birth_date") == "") {
+                                            echo $session->userinfo['birth_date'];
+                                        } else {
+                                            echo $form->value("birth_date");
+                                        }
+                                        ?>"> <br><?php echo $form->error("birth_date"); ?></p>
+
                                     <input type="hidden" name="subedit" value="1">
                                     <input type="submit" value="Atnaujinti">
                                 </form>
