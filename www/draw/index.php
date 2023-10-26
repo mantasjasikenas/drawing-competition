@@ -1,5 +1,5 @@
 <?php
-global $form, $session;
+global $form, $session, $database;
 include("include/session.php");
 ?>
 <html>
@@ -24,10 +24,37 @@ include("include/session.php");
             if ($session->logged_in) {
                 include("include/meniu.php");
                 ?>
-                <div style="text-align: center;color:green">
+                <div style="text-align: center;">
                     <br><br>
-                    <h1>Pradinis sistemos puslapis (index.php).</h1>
-                    <br><br>
+                    <h1>Nuotraukos dalyvaujančios konkurse</h1>
+
+
+                    <?php
+                    $topic = $database->getCurrentCompetition()['topic'];
+                    echo '<h2 style="margin-bottom: unset">Konkurso tema</h2>';
+                    echo '<h3 style="margin-top: unset; color: rgba(50,194,137,0.62)">' . $topic . '</h3>';
+
+
+                    $result = $database->getCurrentCompetitionPaitings();
+
+                    //                    print_r($result);
+                    if ($result && count($result) > 0) {
+
+                        echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
+
+                        foreach ($result as $row) {
+                            $imageData = $row['image'];
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px;">';
+                        }
+
+                        echo '</div>';
+
+
+                    }
+
+                    ?>
+
+
                 </div><br>
                 <?php
                 //Jei vartotojas neprisijungęs, rodoma prisijungimo forma

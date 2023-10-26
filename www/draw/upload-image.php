@@ -1,11 +1,13 @@
 <?php
+global $session, $database;
 include("include/session.php");
+
 if ($session->logged_in) {
     ?>
-    <html>
+    <html lang="lt">
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=9; text/html; charset=utf-8"/>
-        <title>Operacija1</title>
+        <title>Įkelti paveikslėlį</title>
         <link href="include/styles.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
@@ -30,11 +32,29 @@ if ($session->logged_in) {
                     </tr>
                 </table>
                 <br>
-                <div style="text-align: center;color:green">
-                    <h1>Operacija 1.</h1>
-                    Rodomas meniu ir nuoroda į pradžią.
+                <div style="text-align: center;">
+                    <h1>Įkelti paveikslėlį</h1>
+                    <?php
+                    $topic = $database->getCurrentCompetition()['topic'];
+                    echo '<h2 style="margin-bottom: unset">Konkurso tema</h2>';
+                    echo '<h3 style="margin-top: unset; color: rgba(50,194,137,0.62)">' . $topic . '</h3>';
+                    ?>
+
                 </div>
                 <br>
+
+                <div style="padding: 10px; text-align: center">
+                    <form enctype="multipart/form-data" method="post" action="actions/upload.php">
+                        <label for="files">Pasirinkite piešinių nuotraukas</label><br>
+                        <input name="images[]" multiple type="file" id="file[]" accept="image/*" required><br><br>
+                        <textarea required name="comment" placeholder="Komentaras"
+                                  cols="40" rows="5"></textarea
+                        >
+                        <br><br>
+                        <input type="submit" value="Pateikti">
+                    </form>
+                </div>
+
         <tr>
             <td>
                 <?php

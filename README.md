@@ -31,3 +31,8 @@ docker-compose down -v --rmi all
 ```bash
 docker-compose exec redis sh
 ```
+
+Combined
+```bash
+docker-compose down -v --rmi all;  docker-compose up --build --force-recreate --no-deps -d
+```

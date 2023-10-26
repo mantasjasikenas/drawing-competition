@@ -1,4 +1,5 @@
 <?php
+global $session, $form;
 include("../include/session.php");
 
 //Iš pradžių aprašomos funkcijos, po to jos naudojamos.
@@ -10,8 +11,7 @@ include("../include/session.php");
 function displayUsers()
 {
     global $database;
-    $q = "SELECT username,userlevel,email,timestamp "
-        . "FROM " . TBL_USERS . " ORDER BY userlevel DESC,username";
+    $q = "SELECT username,userlevel,email,timestamp " . "FROM " . TBL_USERS . " ORDER BY userlevel DESC,username";
     $result = $database->query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysqli_num_rows($result);
@@ -27,8 +27,7 @@ function displayUsers()
     echo "<table align=\"left\" border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
     echo "<tr><td><b>Vartotojo vardas</b></td><td><b>Lygis</b></td><td><b>E-paštas</b></td><td><b>Paskutinį kartą aktyvus</b></td><td><b>Veiksmai</b></td></tr>\n";
     for ($i = 0; $i < $num_rows; $i++) {
-        $uid =
-        $uname = mysqli_result($result, $i, "username");
+        $uid = $uname = mysqli_result($result, $i, "username");
         $ulevel = mysqli_result($result, $i, "userlevel");
         $ulevelname = '';
         switch ($ulevel) {
@@ -64,6 +63,52 @@ function displayUsers()
     echo "</table><br>\n";
 }
 
+function displayCompetitions()
+{
+    global $database;
+    $q = "SELECT * FROM " . TBL_COMPETITIONS . " ORDER BY start_date DESC";
+    $result = $database->query($q);
+
+    $num_rows = mysqli_num_rows($result);
+
+    if (!$result || ($num_rows < 0)) {
+        echo "Error displaying info";
+        return;
+    }
+
+    if ($num_rows == 0) {
+        echo "Lentelė tuščia.";
+        return;
+    }
+    /* Display table contents */
+    echo "<table align=\"left\" border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
+
+    echo "<tr>
+            <td><b>Id</b></td>
+            <td><b>Tema</b></td>
+            <td><b>Sukurimo data</b></td>
+            <td><b>Pradžios data</b></td>
+            <td><b>Pabaigos data</b></td>
+        </tr>\n";
+
+    for ($i = 0; $i < $num_rows; $i++) {
+        $id = mysqli_result($result, $i, "id");
+        $topic = mysqli_result($result, $i, "topic");
+        $start_date = mysqli_result($result, $i, "start_date");
+        $end_date = mysqli_result($result, $i, "end_date");
+        $creation_date = mysqli_result($result, $i, "creation_date");
+
+        echo "<tr>
+                <td>$id</td>
+                <td>$topic</td>
+                <td>$creation_date</td>
+                <td>$start_date</td>
+                <td>$end_date</td>
+            </tr>\n";
+    }
+    echo "</table><br>\n";
+}
+
 function mysqli_result($res, $row, $field = 0)
 {
     $res->data_seek($row);
@@ -78,8 +123,7 @@ function mysqli_result($res, $row, $field = 0)
 function displayBannedUsers()
 {
     global $database;
-    $q = "SELECT username,timestamp "
-        . "FROM " . TBL_BANNED_USERS . " ORDER BY username";
+    $q = "SELECT username,timestamp " . "FROM " . TBL_BANNED_USERS . " ORDER BY username";
     $result = $database->query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysqli_num_rows($result);
@@ -102,14 +146,31 @@ function displayBannedUsers()
     echo "</table><br>\n";
 }
 
+
+function createNewDrawingCompetion()
+{
+    echo '<form action="adminprocess.php" method="POST">
+            <label for="name">Konkurso tema:</label><br>
+            <input type="text" id="name" name="name" required><br><br>
+            
+            <label for="start_date">Pradžios data:</label><br>
+            <input type="date" id="start_date" name="start_date" required><br><br>
+            
+            <label for="end_date">Pabaigos data:</label><br>
+            <input type="date" id="end_date" name="end_date" required><br><br>
+            
+            <input type="submit" value="Sukurti konkursą">
+        </form>';
+
+}
+
 function ViewActiveUsers()
 {
     global $database;
     if (!defined('TBL_ACTIVE_USERS')) {
         die("");
     }
-    $q = "SELECT username FROM " . TBL_ACTIVE_USERS
-        . " ORDER BY timestamp DESC,username";
+    $q = "SELECT username FROM " . TBL_ACTIVE_USERS . " ORDER BY timestamp DESC,username";
     $result = $database->query($q);
     /* Error occurred, return given name by default */
     $num_rows = mysqli_num_rows($result);
@@ -122,8 +183,7 @@ function ViewActiveUsers()
         echo "<tr><td><font size=\"2\">\n";
         for ($i = 0; $i < $num_rows; $i++) {
             $uname = mysqli_result($result, $i, "username");
-            if ($i > 0)
-                echo ", ";
+            if ($i > 0) echo ", ";
             echo "<a href=\"../userinfo.php?user=$uname\">$uname</a>";
         }
         echo ".";
@@ -168,11 +228,48 @@ if (!$session->isAdmin()) {
                 <br>
                 <?php
                 if ($form->num_errors > 0) {
-                    echo "<font size=\"4\" color=\"#ff0000\">"
-                        . "!*** Error with request, please fix</font><br><br>";
+                    echo "<font size=\"4\" color=\"#ff0000\">" . "!*** Error with request, please fix</font><br><br>";
                 }
                 ?>
                 <table style=" text-align:left;" border="0" cellspacing="5" cellpadding="5">
+                    <tr>
+                        <td>
+                            <?php
+                            /**
+                             * Display Competition Table
+                             */
+                            ?>
+                            <h3>Konkursai:</h3>
+                            <?php
+                            displayCompetitions();
+                            ?>
+                            <br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <hr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php
+                            /**
+                             * Display Banned Users Table
+                             */
+                            ?>
+                            <h3>Pridėti naują konkursą:</h3>
+                            <?php
+                            createNewDrawingCompetion();
+                            ?>
+                            <br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <hr>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             <?php

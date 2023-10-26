@@ -2,10 +2,12 @@
 
 include("../include/session.php");
 
-class AdminProcess {
+class AdminProcess
+{
     /* Class constructor */
 
-    function AdminProcess() {
+    function AdminProcess()
+    {
         global $session;
         /* Make sure administrator is accessing page */
         if (!$session->isAdmin()) {
@@ -15,20 +17,15 @@ class AdminProcess {
         /* Admin submitted update user level form */
         if (isset($_POST['subupdlevel'])) {
             $this->procUpdateLevel();
-        }
-        /* Admin submitted delete user form */ else if (isset($_GET['d'])) {
+        } /* Admin submitted delete user form */ else if (isset($_GET['d'])) {
             $this->procDeleteUser();
-        }
-        /* Admin submitted delete inactive users form */ else if (isset($_POST['subdelinact'])) {
+        } /* Admin submitted delete inactive users form */ else if (isset($_POST['subdelinact'])) {
             $this->procDeleteInactive();
-        }
-        /* Admin submitted ban user form */ else if (isset($_GET['b'])) {
+        } /* Admin submitted ban user form */ else if (isset($_GET['b'])) {
             $this->procBanUser();
-        }
-        /* Admin submitted delete banned user form */ else if (isset($_GET['db'])) {
+        } /* Admin submitted delete banned user form */ else if (isset($_GET['db'])) {
             $this->procDeleteBannedUser();
-        }
-        /* Should not get here, redirect to home page */ else {
+        } /* Should not get here, redirect to home page */ else {
             header("Location: ../index.php");
         }
     }
@@ -38,7 +35,8 @@ class AdminProcess {
      * their user level is updated according to the admin's
      * request.
      */
-    function procUpdateLevel() {
+    function procUpdateLevel()
+    {
         global $session, $database, $form;
         /* Username error checking */
         $subuser = $this->checkUsername("upduser");
@@ -48,9 +46,8 @@ class AdminProcess {
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
             header("Location: " . $session->referrer);
-        }
-        /* Update user level */ else {
-            $database->updateUserField($subuser, "userlevel", (int) $_POST['updlevel']);
+        } /* Update user level */ else {
+            $database->updateUserField($subuser, "userlevel", (int)$_POST['updlevel']);
             header("Location: " . $session->referrer);
         }
     }
@@ -59,7 +56,8 @@ class AdminProcess {
      * procDeleteUser - If the submitted username is correct,
      * the user is deleted from the database.
      */
-    function procDeleteUser() {
+    function procDeleteUser()
+    {
         global $session, $database, $form;
         /* Username error checking */
         $subuser = $this->checkUsername("deluser");
@@ -68,8 +66,7 @@ class AdminProcess {
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
             header("Location: " . $session->referrer);
-        }
-        /* Delete user from database */ else {
+        } /* Delete user from database */ else {
             $q = "DELETE FROM " . TBL_USERS . " WHERE username = '$subuser'";
             $database->query($q);
             header("Location: " . $session->referrer);
@@ -82,11 +79,12 @@ class AdminProcess {
      * is defined by the number of days specified that have
      * gone by that the user has not logged in.
      */
-    function procDeleteInactive() {
+    function procDeleteInactive()
+    {
         global $session, $database;
         $inact_time = $session->time - $_POST['inactdays'] * 24 * 60 * 60;
         $q = "DELETE FROM " . TBL_USERS . " WHERE timestamp < $inact_time "
-                . "AND userlevel != " . ADMIN_LEVEL;
+            . "AND userlevel != " . ADMIN_LEVEL;
         $database->query($q);
         header("Location: " . $session->referrer);
     }
@@ -97,7 +95,8 @@ class AdminProcess {
      * removing the username from the users table and adding
      * it to the banned users table.
      */
-    function procBanUser() {
+    function procBanUser()
+    {
         global $session, $database, $form;
         /* Username error checking */
         $subuser = $this->checkUsername("banuser");
@@ -107,8 +106,7 @@ class AdminProcess {
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
             header("Location: " . $session->referrer);
-        }
-        /* Ban user from member system */ else {
+        } /* Ban user from member system */ else {
             $q = "DELETE FROM " . TBL_USERS . " WHERE username = '$subuser'";
             $database->query($q);
 
@@ -123,7 +121,8 @@ class AdminProcess {
      * the user is deleted from the banned users table, which
      * enables someone to register with that username again.
      */
-    function procDeleteBannedUser() {
+    function procDeleteBannedUser()
+    {
         global $session, $database, $form;
         /* Username error checking */
         $subuser = $this->checkUsername("delbanuser", true);
@@ -133,8 +132,7 @@ class AdminProcess {
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
             header("Location: " . $session->referrer);
-        }
-        /* Delete user from database */ else {
+        } /* Delete user from database */ else {
             $q = "DELETE FROM " . TBL_BANNED_USERS . " WHERE username = '$subuser'";
             $database->query($q);
             header("Location: " . $session->referrer);
@@ -146,7 +144,8 @@ class AdminProcess {
      * it makes sure the submitted username is valid, if not,
      * it adds the appropritate error to the form.
      */
-    function checkUsername($uname, $ban = false) {
+    function checkUsername($uname, $ban = false)
+    {
         global $database, $form;
         /* Username error checking */
         $subuser = $_REQUEST[$uname];
@@ -157,8 +156,8 @@ class AdminProcess {
             /* Make sure username is in database */
             $subuser = stripslashes($subuser);
             if (strlen($subuser) < 5 || strlen($subuser) > 30 ||
-               //     !eregi("^([0-9a-z])+$", $subuser) ||
-                    (!$ban && !$database->usernameTaken($subuser))) {
+                //     !eregi("^([0-9a-z])+$", $subuser) ||
+                (!$ban && !$database->usernameTaken($subuser))) {
                 $form->setError($field, "* Username does not exist<br>");
             }
         }

@@ -2,7 +2,8 @@
 
 include("constants.php");
 
-class MySQLDB {
+class MySQLDB
+{
 
     var $connection;         //The MySQL database connection
     var $num_active_users;   //Number of active users viewing site
@@ -13,10 +14,11 @@ class MySQLDB {
 
     /* Class constructor */
 
-    function MySQLDB() {
+    function MySQLDB()
+    {
         /* Make connection to database */
         $this->connection = mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME)
-                or die(mysql_error() . '<br><h1>Faile include/constants.php suveskite savo MySQLDB duomenis.</h1>');
+        or die(mysql_error() . '<br><h1>Faile include/constants.php suveskite savo MySQLDB duomenis.</h1>');
 
         /**
          * Only query database to find out number of members
@@ -42,7 +44,8 @@ class MySQLDB {
      * passwords don't match up, it returns an error code
      * (1 or 2). On success it returns 0.
      */
-    function confirmUserPass($username, $password) {
+    function confirmUserPass($username, $password)
+    {
         /* Add slashes if necessary (for query) */
         if (!get_magic_quotes_gpc()) {
             $username = addslashes($username);
@@ -76,7 +79,8 @@ class MySQLDB {
      * userids don't match up, it returns an error code
      * (1 or 2). On success it returns 0.
      */
-    function confirmUserID($username, $userid) {
+    function confirmUserID($username, $userid)
+    {
         /* Add slashes if necessary (for query) */
         if (!get_magic_quotes_gpc()) {
             $username = addslashes($username);
@@ -106,7 +110,8 @@ class MySQLDB {
      * usernameTaken - Returns true if the username has
      * been taken by another user, false otherwise.
      */
-    function usernameTaken($username) {
+    function usernameTaken($username)
+    {
         if (!get_magic_quotes_gpc()) {
             $username = addslashes($username);
         }
@@ -119,7 +124,8 @@ class MySQLDB {
      * usernameBanned - Returns true if the username has
      * been banned by the administrator.
      */
-    function usernameBanned($username) {
+    function usernameBanned($username)
+    {
         if (!get_magic_quotes_gpc()) {
             $username = addslashes($username);
         }
@@ -133,7 +139,8 @@ class MySQLDB {
      * info into the database. Appropriate user level is set.
      * Returns true on success, false otherwise.
      */
-    function addNewUser($username, $password, $email) {
+    function addNewUser($username, $password, $email)
+    {
         $time = time();
         /* If admin sign up, give admin user level */
         if (strcasecmp($username, ADMIN_NAME) == 0) {
@@ -149,7 +156,8 @@ class MySQLDB {
      * updateUserField - Updates a field, specified by the field
      * parameter, in the user's row of the database.
      */
-    function updateUserField($username, $field, $value) {
+    function updateUserField($username, $field, $value)
+    {
         $q = "UPDATE " . TBL_USERS . " SET " . $field . " = '$value' WHERE username = '$username'";
         return mysqli_query($this->connection, $q);
     }
@@ -159,7 +167,8 @@ class MySQLDB {
      * query asking for all information stored regarding
      * the given username. If query fails, NULL is returned.
      */
-    function getUserInfo($username) {
+    function getUserInfo($username)
+    {
         $q = "SELECT * FROM " . TBL_USERS . " WHERE username = '$username'";
         $result = mysqli_query($this->connection, $q);
         /* Error occurred, return given name by default */
@@ -179,7 +188,8 @@ class MySQLDB {
      * is returned. This is to improve efficiency, effectively
      * not querying the database when no call is made.
      */
-    function getNumMembers() {
+    function getNumMembers()
+    {
         if ($this->num_members < 0) {
             $q = "SELECT * FROM " . TBL_USERS;
             $result = mysqli_query($this->connection, $q);
@@ -192,7 +202,8 @@ class MySQLDB {
      * calcNumActiveUsers - Finds out how many active users
      * are viewing site and sets class variable accordingly.
      */
-    function calcNumActiveUsers() {
+    function calcNumActiveUsers()
+    {
         /* Calculate number of users at site */
         $q = "SELECT * FROM " . TBL_ACTIVE_USERS;
         $result = mysqli_query($this->connection, $q);
@@ -203,7 +214,8 @@ class MySQLDB {
      * calcNumActiveGuests - Finds out how many active guests
      * are viewing site and sets class variable accordingly.
      */
-    function calcNumActiveGuests() {
+    function calcNumActiveGuests()
+    {
         /* Calculate number of guests at site */
         $q = "SELECT * FROM " . TBL_ACTIVE_GUESTS;
         $result = mysqli_query($this->connection, $q);
@@ -215,7 +227,8 @@ class MySQLDB {
      * in the database, and also adds him to the table of
      * active users, or updates timestamp if already there.
      */
-    function addActiveUser($username, $time) {
+    function addActiveUser($username, $time)
+    {
         $q = "UPDATE " . TBL_USERS . " SET timestamp = '$time' WHERE username = '$username'";
         mysqli_query($this->connection, $q);
 
@@ -228,7 +241,8 @@ class MySQLDB {
 
     /* addActiveGuest - Adds guest to active guests table */
 
-    function addActiveGuest($ip, $time) {
+    function addActiveGuest($ip, $time)
+    {
         if (!TRACK_VISITORS)
             return;
         $q = "REPLACE INTO " . TBL_ACTIVE_GUESTS . " VALUES ('$ip', '$time')";
@@ -240,7 +254,8 @@ class MySQLDB {
 
     /* removeActiveUser */
 
-    function removeActiveUser($username) {
+    function removeActiveUser($username)
+    {
         if (!TRACK_VISITORS)
             return;
         $q = "DELETE FROM " . TBL_ACTIVE_USERS . " WHERE username = '$username'";
@@ -250,7 +265,8 @@ class MySQLDB {
 
     /* removeActiveGuest */
 
-    function removeActiveGuest($ip) {
+    function removeActiveGuest($ip)
+    {
         if (!TRACK_VISITORS)
             return;
         $q = "DELETE FROM " . TBL_ACTIVE_GUESTS . " WHERE ip = '$ip'";
@@ -260,7 +276,8 @@ class MySQLDB {
 
     /* removeInactiveUsers */
 
-    function removeInactiveUsers() {
+    function removeInactiveUsers()
+    {
         if (!TRACK_VISITORS)
             return;
         $timeout = time() - USER_TIMEOUT * 60;
@@ -271,7 +288,8 @@ class MySQLDB {
 
     /* removeInactiveGuests */
 
-    function removeInactiveGuests() {
+    function removeInactiveGuests()
+    {
         if (!TRACK_VISITORS)
             return;
         $timeout = time() - GUEST_TIMEOUT * 60;
@@ -285,8 +303,37 @@ class MySQLDB {
      * returns the result, which may be false, true or a
      * resource identifier.
      */
-    function query($query) {
+    function query($query)
+    {
         return mysqli_query($this->connection, $query);
+    }
+
+    function getCurrentCompetitionPaitings()
+    {
+        $cur = $this->getCurrentCompetition();
+
+        $q = "SELECT * FROM paintings WHERE fk_upload IN (SELECT id FROM uploads WHERE fk_competition = " . $cur['id'] . ")";
+        $result = mysqli_query($this->connection, $q);
+
+        if (!$result || (mysqli_num_rows($result) < 1)) {
+            return NULL;
+        }
+        /* Return result array */
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+
+    }
+
+    function getCurrentCompetition()
+    {
+        $q = "SELECT * FROM " . TBL_COMPETITIONS . " WHERE start_date < NOW() AND end_date > NOW()";
+        $result = mysqli_query($this->connection, $q);
+        /* Error occurred, return given name by default */
+        if (!$result || (mysqli_num_rows($result) < 1)) {
+            return NULL;
+        }
+        /* Return result array */
+        return mysqli_fetch_array($result);
     }
 
 }

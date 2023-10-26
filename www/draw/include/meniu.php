@@ -15,13 +15,13 @@ if (isset($session) && $session->logged_in) {
         echo "[<a href=\"" . $path . "index.php\">Pagrindinis puslapis</a>] &nbsp;&nbsp;"
             . "[<a href=\"" . $path . "userinfo.php?user=$session->username\">Mano paskyra</a>] &nbsp;&nbsp;"
             . "[<a href=\"" . $path . "useredit.php\">Redaguoti paskyrą</a>] &nbsp;&nbsp;"
-            . "[<a href=\"" . $path . "operacija1.php\">Demo operacija1</a>] &nbsp;&nbsp;"
-            . "[<a href=\"" . $path . "operacija2.php\">Demo operacija2</a>] &nbsp;&nbsp;";
-        //Trečia operacija rodoma valdytojui ir administratoriui
-        if ($session->isManager() || $session->isAdmin()) {
-            echo "[<a href=\"" . $path . "operacija3.php\">Demo operacija3</a>] &nbsp;&nbsp;";
+            . "[<a href=\"" . $path . "upload-image.php\">Įkelti paveikslėlį</a>] &nbsp;&nbsp;"
+            . "[<a href=\"" . $path . "gallery.php\">Galerija</a>] &nbsp;&nbsp;";
+
+        if ($session->isEvaluator() || $session->isAdmin()) {
+            echo "[<a href=\"" . $path . "rate-image.php\">Įvertinti paveikslėlį</a>] &nbsp;&nbsp;";
         }
-        //Administratoriaus sąsaja rodoma tik administratoriui
+
         if ($session->isAdmin()) {
             echo "[<a href=\"" . $path . "admin/admin.php\">Administratoriaus sąsaja</a>] &nbsp;&nbsp;";
         }
@@ -30,7 +30,7 @@ if (isset($session) && $session->logged_in) {
         ?>
     </table>
     <?php
-}//Meniu baigtas
+}
 ?>
 <?php
 /*

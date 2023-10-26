@@ -4,10 +4,13 @@ include("database.php");
 include("mailer.php");
 include("form.php");
 
-class Session {
+class Session
+{
 
     var $username;     //Username given on sign-up
     var $userid;       //Random value generated on current login
+
+    var $id;
     var $userlevel;    //The level to which the user pertains
     var $time;         //Time user was last active (page loaded)
     var $logged_in;    //True if user is logged in, false otherwise
@@ -22,19 +25,21 @@ class Session {
      */
     /* Class constructor */
 
-    function Session() {
+    function Session()
+    {
         $this->time = time();
         $this->startSession();
     }
 
     /**
-     * startSession - Performs all the actions necessary to 
+     * startSession - Performs all the actions necessary to
      * initialize this session object. Tries to determine if the
-     * the user has logged in already, and sets the variables 
+     * the user has logged in already, and sets the variables
      * accordingly. Also takes advantage of this page load to
      * update the active visitors tables.
      */
-    function startSession() {
+    function startSession()
+    {
         global $database;  //The database connection
         session_start();   //Tell PHP to start the session
 
@@ -49,8 +54,7 @@ class Session {
             $this->username = $_SESSION['username'] = GUEST_NAME;
             $this->userlevel = GUEST_LEVEL;
             $database->addActiveGuest($_SERVER['REMOTE_ADDR'], $this->time);
-        }
-        /* Update users last active timestamp */ else {
+        } /* Update users last active timestamp */ else {
             $database->addActiveUser($this->username, $this->time);
         }
 
@@ -73,10 +77,11 @@ class Session {
      * checkLogin - Checks if the user has already previously
      * logged in, and a session with the user has already been
      * established. Also checks to see if user has been remembered.
-     * If so, the database is queried to make sure of the user's 
+     * If so, the database is queried to make sure of the user's
      * authenticity. Returns true if the user has logged in.
      */
-    function checkLogin() {
+    function checkLogin()
+    {
         global $database;  //The database connection
         /* Check if user has been remembered */
         if (isset($_COOKIE['cookname']) && isset($_COOKIE['cookid'])) {
@@ -86,7 +91,7 @@ class Session {
 
         /* Username and userid have been set and not guest */
         if (isset($_SESSION['username']) && isset($_SESSION['userid']) &&
-                $_SESSION['username'] != GUEST_NAME) {
+            $_SESSION['username'] != GUEST_NAME) {
             /* Confirm that username and userid are valid */
             if ($database->confirmUserID($_SESSION['username'], $_SESSION['userid']) != 0) {
                 /* Variables are incorrect, user not logged in */
@@ -100,10 +105,9 @@ class Session {
             $this->username = $this->userinfo['username'];
             $this->userid = $this->userinfo['userid'];
             $this->userlevel = $this->userinfo['userlevel'];
+            $this->id = $this->userinfo['id'];
             return true;
-        }
-
-        /* User not logged in */ else {
+        } /* User not logged in */ else {
             return false;
         }
     }
@@ -114,7 +118,8 @@ class Session {
      * of that information in the database and creates the session.
      * Effectively logging in the user if all goes well.
      */
-    function login($subuser, $subpass, $subremember) {
+    function login($subuser, $subpass, $subremember)
+    {
         global $database, $form;  //The database and form object
 
         /* Username error checking */
@@ -163,6 +168,7 @@ class Session {
         $this->username = $_SESSION['username'] = $this->userinfo['username'];
         $this->userid = $_SESSION['userid'] = $this->generateRandID();
         $this->userlevel = $this->userinfo['userlevel'];
+        $this->id = $this->userinfo['id'];
 
         /* Insert userid into database and update active users table */
         $database->updateUserField($this->username, "userid", $this->userid);
@@ -191,7 +197,8 @@ class Session {
      * computer as a result of him wanting to be remembered, and also
      * unsets session variables and demotes his user level to guest.
      */
-    function logout() {
+    function logout()
+    {
         global $database;  //The database connection
         /**
          * Delete cookies - the time must be in the past,
@@ -229,7 +236,8 @@ class Session {
      * 1. If no errors were found, it registers the new user and
      * returns 0. Returns 2 if registration failed.
      */
-    function register($subuser, $subpass, $subemail) {
+    function register($subuser, $subpass, $subemail)
+    {
         global $database, $form, $mailer;  //The database, form and mailer object
 
         /* Username error checking */
@@ -243,18 +251,14 @@ class Session {
                 $form->setError($field, "* Vartotojo vardas turi mažiau kaip 5 simbolius");
             } else if (strlen($subuser) > 30) {
                 $form->setError($field, "* Vartotojo vardas virš 30 simbolių");
-            }
-            /* Check if username is not alphanumeric */ else if (!ctype_alnum($subuser)) {
+            } /* Check if username is not alphanumeric */ else if (!ctype_alnum($subuser)) {
                 $form->setError($field, "* Vartotojo vardas gali būti sudarytas
                     <br>&nbsp;&nbsp;tik iš raidžių ir skaičių");
-            }
-            /* Check if username is reserved */ else if (strcasecmp($subuser, GUEST_NAME) == 0) {
+            } /* Check if username is reserved */ else if (strcasecmp($subuser, GUEST_NAME) == 0) {
                 $form->setError($field, "* Rezervuotas vartotojo vardas");
-            }
-            /* Check if username is already in use */ else if ($database->usernameTaken($subuser)) {
+            } /* Check if username is already in use */ else if ($database->usernameTaken($subuser)) {
                 $form->setError($field, "* Toks vartotojo vardas jau yra");
-            }
-            /* Check if username is banned */ else if ($database->usernameBanned($subuser)) {
+            } /* Check if username is banned */ else if ($database->usernameBanned($subuser)) {
                 $form->setError($field, "* Vartotojas užblokuotas");
             }
         }
@@ -268,8 +272,7 @@ class Session {
             $subpass = stripslashes($subpass);
             if (strlen($subpass) < 4) {
                 $form->setError($field, "* Ne mažiau kaip 4 simboliai");
-            }
-            /* Check if password is not alphanumeric */ else if (!ctype_alnum($subpass = trim($subpass))) {
+            } /* Check if password is not alphanumeric */ else if (!ctype_alnum($subpass = trim($subpass))) {
                 $form->setError($field, "* Slaptažodis gali būti sudarytas
                     <br>&nbsp;&nbsp;tik iš raidžių ir skaičių");
             }
@@ -287,10 +290,10 @@ class Session {
             $form->setError($field, "* Neįvestas e-pašto adresas");
         } else {
             /* Check if valid email address */
-          //  $regex = "^[_+a-z0-9-]+(\.[_+a-z0-9-]+)*"
+            //  $regex = "^[_+a-z0-9-]+(\.[_+a-z0-9-]+)*"
             //        . "@[a-z0-9-]+(\.[a-z0-9-]{1,})*"
             //        . "\.([a-z]{2,}){1}$";
-           if (!(filter_var($subemail, FILTER_VALIDATE_EMAIL))) {
+            if (!(filter_var($subemail, FILTER_VALIDATE_EMAIL))) {
                 $form->setError($field, "* Klaidingas e-pašto adresas");
             }
             $subemail = stripslashes($subemail);
@@ -299,8 +302,7 @@ class Session {
         /* Errors exist, have user correct them */
         if ($form->num_errors > 0) {
             return 1;  //Errors with form
-        }
-        /* No errors, add the new account to the */ else {
+        } /* No errors, add the new account to the */ else {
             if ($database->addNewUser($subuser, md5($subpass), $subemail)) {
                 if (EMAIL_WELCOME) {
                     $mailer->sendWelcome($subuser, $subemail, $subpass);
@@ -319,7 +321,8 @@ class Session {
      * format, the change is made. All other fields are changed
      * automatically.
      */
-    function editAccount($subcurpass, $subnewpass, $subemail) {
+    function editAccount($subcurpass, $subnewpass, $subemail)
+    {
         global $database, $form;  //The database and form object
         /* New password entered */
         if ($subnewpass) {
@@ -331,7 +334,7 @@ class Session {
                 /* Check if password too short or is not alphanumeric */
                 $subcurpass = stripslashes($subcurpass);
                 if (strlen($subcurpass) < 4 ||
-                        !ctype_alnum($subcurpass = trim($subcurpass))) {
+                    !ctype_alnum($subcurpass = trim($subcurpass))) {
                     $form->setError($field, "* Slaptažodis gali būti sudarytas
                     <br>&nbsp;&nbsp;tik iš raidžių ir skaičių");
                 }
@@ -347,13 +350,11 @@ class Session {
             $subpass = stripslashes($subnewpass);
             if (strlen($subnewpass) < 4) {
                 $form->setError($field, "* Slaptažodis per trumpas");
-            }
-            /* Check if password is not alphanumeric */ else if (!ctype_alnum(($subnewpass = trim($subnewpass)))) {
+            } /* Check if password is not alphanumeric */ else if (!ctype_alnum(($subnewpass = trim($subnewpass)))) {
                 $form->setError($field, "* Slaptažodis gali būti sudarytas
                     <br>&nbsp;&nbsp;tik iš raidžių ir skaičių");
             }
-        }
-        /* Change password attempted */ else if ($subcurpass) {
+        } /* Change password attempted */ else if ($subcurpass) {
             /* New Password error reporting */
             $field = "newpass";  //Use field name for new password
             $form->setError($field, "* Neįvestas naujas slaptažodis");
@@ -362,11 +363,11 @@ class Session {
         /* Email error checking */
         $field = "email";  //Use field name for email
         if ($subemail && strlen($subemail = trim($subemail)) > 0) {
-             /* Check if valid email address */
-          //  $regex = "^[_+a-z0-9-]+(\.[_+a-z0-9-]+)*"
+            /* Check if valid email address */
+            //  $regex = "^[_+a-z0-9-]+(\.[_+a-z0-9-]+)*"
             //        . "@[a-z0-9-]+(\.[a-z0-9-]{1,})*"
             //        . "\.([a-z]{2,}){1}$";
-           if (!(filter_var($subemail, FILTER_VALIDATE_EMAIL))) {
+            if (!(filter_var($subemail, FILTER_VALIDATE_EMAIL))) {
 
                 $form->setError($field, "* Neteisingas e-pašto adresas");
             }
@@ -396,12 +397,14 @@ class Session {
      * isAdmin - Returns true if currently logged in user is
      * an administrator, false otherwise.
      */
-    function isAdmin() {
+    function isAdmin()
+    {
         return ($this->userlevel == ADMIN_LEVEL ||
-                $this->username == ADMIN_NAME);
+            $this->username == ADMIN_NAME);
     }
 
-    function isManager() {
+    function isEvaluator()
+    {
         return ($this->userlevel == EVALUATOR_LEVEL);
     }
 
@@ -410,7 +413,8 @@ class Session {
      * letters (lower and upper case) and digits and returns
      * the md5 hash of it to be used as a userid.
      */
-    function generateRandID() {
+    function generateRandID()
+    {
         return md5($this->generateRandStr(16));
     }
 
@@ -419,7 +423,8 @@ class Session {
      * letters (lower and upper case) and digits, the length
      * is a specified parameter.
      */
-    function generateRandStr($length) {
+    function generateRandStr($length)
+    {
         $randstr = "";
         for ($i = 0; $i < $length; $i++) {
             $randnum = mt_rand(0, 61);

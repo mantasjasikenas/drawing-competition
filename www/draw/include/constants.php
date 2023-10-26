@@ -22,6 +22,7 @@ define("DB_NAME", "drawing_comp");
  * in the script.
  */
 define("TBL_USERS", "users");
+define("TBL_COMPETITIONS", "competitions");
 define("TBL_ACTIVE_USERS", "active_users");
 define("TBL_ACTIVE_GUESTS", "active_guests");
 define("TBL_BANNED_USERS", "banned_users");
