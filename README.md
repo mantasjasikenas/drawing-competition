@@ -36,3 +36,8 @@ Combined
 ```bash
 docker-compose down -v --rmi all;  docker-compose up --build --force-recreate --no-deps -d
 ```
+
+Launch the application on VM
+```bash
+docker logout
+docker-compose up --build --force-recreate --no-deps -d

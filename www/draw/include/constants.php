@@ -11,7 +11,7 @@
  * to the MySQL database. Make sure the information is
  * correct.
  */
-define("DB_SERVER", "host.docker.internal");  // localhost
+define("DB_SERVER", "db");  // localhost host.docker.internal
 define("DB_USER", "manjas1");
 define("DB_PASS", "manjas1");
 define("DB_NAME", "drawing_comp");

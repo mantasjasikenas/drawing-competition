@@ -1,4 +1,5 @@
 <?php
+global $form;
 include("include/session.php");
 ?>
 <html>
