@@ -9,6 +9,37 @@ if ($session->logged_in && ($session->isAdmin() || $session->isEvaluator())) {
         <meta http-equiv="X-UA-Compatible" content="IE=9; text/html; charset=utf-8"/>
         <title>Įvertinti paveikslėlį</title>
         <link href="include/styles.css" rel="stylesheet" type="text/css"/>
+        <style>
+            a.left-arrow {
+                color: black;
+                background-color: darkseagreen;
+                font-size: 40px;
+                border-radius: 50% 0 0 50%;
+            }
+
+            a.right-arrow {
+                color: black;
+                background-color: darkseagreen;
+                font-size: 40px;
+                border-radius: 0 50% 50% 0;
+            }
+
+            a.arrow {
+                text-decoration: none;
+                display: inline-block;
+                padding: 4px 8px 8px;
+            }
+        </style>
+        <script>
+            function toggleFilter() {
+                const img = document.getElementById('img');
+                if (img.style.filter === 'grayscale(100%)') {
+                    img.style.filter = 'none';
+                } else {
+                    img.style.filter = 'grayscale(100%)';
+                }
+            }
+        </script>
     </head>
     <body>
     <table class="center">
@@ -34,61 +65,85 @@ if ($session->logged_in && ($session->isAdmin() || $session->isEvaluator())) {
                 <br>
                 <div style="text-align: center;">
                     <h1>Įvertinti paveikslėlį</h1>
-                    <?php
-                    $topic = $database->getCurrentCompetition()['topic'];
-                    echo '<h2 style="margin-bottom: unset">Konkurso tema</h2>';
-                    echo '<h3 style="margin-top: unset; color: rgba(50,194,137,0.62)">' . $topic . '</h3>';
-                    ?>
 
+                    <?php
+                    if (isset($_SESSION['message'])) {
+                        echo "<h4 style='color: rgb(130,255,47)'>" . $_SESSION['message'] . "</h4>";
+                        unset($_SESSION['message']);
+                    }
+                    ?>
                 </div>
                 <br>
 
                 <div style="padding: 10px">
                     <?php
 
-                    $result = $database->getUnratedPaintingsByUser($session->username);
+                    $unrated_images = $database->getUnratedPaintingsId($session->id);
 
 
-                    if (!($result && count($result) > 0)) {
+                    if (!($unrated_images && count($unrated_images) > 0)) {
                         echo '<h2 style="margin-top: unset; color: red; text-align: center">Nėra neįvertintų paveikslėlių</h2>';
                     } else {
                         echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
 
-                        $i = 0;
+                        $id = $_GET['image'] ?? $unrated_images[0];
 
-                        foreach ($result as $row) {
-                            $imageData = $row['image'];
+                        if (!in_array($id, $unrated_images)) {
+                            echo '<h2 style="margin-top: unset; color: red; text-align: center">Nurodytos nuotraukos nepavyko rasti!</h2>';
+                            echo '<br><br>';
+                            echo '<a href="rate-image.php">Grįžti atgal</a>';
 
-                            echo '<div style="padding: 6px;">';
-                            echo '<input type="radio" id="image' . $i . '" name="image" />'; // value="' . $unrated_images[$i] . '">';
-                            echo '<label for="image' . $i . '">';
-                            echo '<img src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 200px;">';
-                            echo '</label>';
-
-
-                            echo '</div>';
-
-                            $i++;
+                            exit();
                         }
 
+                        $image = $database->getPaintingById($id);
+                        $imageData = $image['image'];
+                        $index = array_search($id, $unrated_images);
+
+                        echo '<div style="display: flex; align-items: center">';
+
+                        if (count($unrated_images) > 1 && $index > 0) {
+                            $prev_id = $unrated_images[$index - 1];
+
+                            echo "<a class='arrow left-arrow' href='rate-image.php?image=$prev_id'>&#8249;</a>";
+                        }
+
+                        echo '<img id="img" src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 200px;">';
+
+
+                        if (count($unrated_images) > 1 && $index < count($unrated_images) - 1) {
+                            $next_id = $unrated_images[$index + 1];
+                            echo "<a class='arrow right-arrow'
+                                    href='rate-image.php?image=$next_id'>&#8250;</a>";
+                        }
 
                         echo '</div>';
+                        echo '</div>';
+
+                        echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
+                        echo '<button style="margin: 20px; 
+                                width: 100px; background-color: darkseagreen; border-radius: 5px; border: none; 
+                                color: white; font-size: 16px; font-weight: bold; cursor: pointer;" 
+                                onclick="toggleFilter()"
+                                >B/W filtras</button>';
+                        echo '</div>';
+
 
                         echo "<div style=' padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: center'>
-                                <form method='POST' action='handle_review.php' style='justify-content: center'>
-                                    <input type='hidden' name='image_name' />  
+                                <form method='POST' action='actions/handle-review.php' style='justify-content: center'>
+                                    <input type='hidden' name='painting_id' value='$id'>  
                                     
-                                    <label for='vol'>Kompozicija:</label><br>
-                                    <input type='range' id='vol' name='vol' min='0' max='10'><br><br>
+                                    <label for='composition'>Kompozicija:</label><br>
+                                    <input type='range' id='composition' name='composition' min='0' max='10'><br><br>
                                     
-                                    <label for='vol'>Spalvingumas:</label><br>
-                                    <input type='range' id='vol' name='vol' min='0' max='10'><br><br>
+                                    <label for='colorfulness'>Spalvingumas:</label><br>
+                                    <input type='range' id='colorfulness' name='colorfulness' min='0' max='10'><br><br>
                                     
-                                    <label for='vol'>Atitikimas tematikai:</label><br>
-                                    <input type='range' id='vol' name='vol' min='0' max='10'><br><br>
+                                    <label for='compliance'>Atitikimas tematikai:</label><br>
+                                    <input type='range' id='compliance' name='compliance' min='0' max='10'><br><br>
                                     
-                                    <label for='vol'>Originalumas:</label><br>
-                                    <input type='range' id='vol' name='vol' min='0' max='10'><br><br>
+                                    <label for='originality'>Originalumas:</label><br>
+                                    <input type='range' id='originality' name='originality' min='0' max='10'><br><br>
                                     
                                     <input type='submit' value='Palikti įvertinimą'>
                                 </form>

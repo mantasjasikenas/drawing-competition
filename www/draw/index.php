@@ -26,16 +26,12 @@ include("include/session.php");
                 ?>
                 <div style="text-align: center;">
                     <br><br>
-                    <h1>Nuotraukos dalyvaujančios konkurse</h1>
+                    <h1>Pagrindinis puslapis</h1>
 
 
                     <?php
-                    $topic = $database->getCurrentCompetition()['topic'];
-                    echo '<h2 style="margin-bottom: unset">Konkurso tema</h2>';
-                    echo '<h3 style="margin-top: unset; color: rgba(50,194,137,0.62)">' . $topic . '</h3>';
 
-
-                    $result = $database->getCurrentCompetitionPaintings();
+/*                    $result = $database->getCurrentCompetitionPaintings();
 
                     if ($result && count($result) > 0) {
 
@@ -49,7 +45,7 @@ include("include/session.php");
                         echo '</div>';
 
 
-                    }
+                    }*/
 
                     ?>
 

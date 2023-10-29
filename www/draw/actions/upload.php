@@ -14,7 +14,18 @@ if ($conn->connect_error) {
 
 // Check if an image file was uploaded
 if (isset($_FILES["images"])) {
-    $competition_id = $database->getCurrentCompetition()['id'];
+    $competition_id = $_POST['competition'];
+    $style = $_POST['style'];
+
+    if ($style == "default") {
+        $style = "";
+    }
+
+    $_SESSION['style'] = $style;
+
+//    TODO add style to database
+// convert style to css class
+
 
     $sql = "INSERT INTO uploads (comment, creation_date, fk_user, fk_competition) VALUES ('" . $_POST['comment'] . "', NOW(), '" . $session->id . "', '" . $competition_id . "')";
     $statement = $conn->prepare($sql);
@@ -23,7 +34,6 @@ if (isset($_FILES["images"])) {
     $upload_id = mysqli_insert_id($conn);
 
     foreach ($_FILES['images']['name'] as $key => $value) {
-        // FIXME change max file size
         $imgContent = file_get_contents($_FILES['images']['tmp_name'][$key]);
 
         $sql = "INSERT INTO paintings(id, image, fk_upload) VALUES(?, ?, ?)";
@@ -34,6 +44,17 @@ if (isset($_FILES["images"])) {
 
 
         $current_id = $statement->execute(); //or die(" < b>Error:</b > Problem on Image Insert < br />" . mysqli_connect_error());
+
+
+        if (!empty($current_id)) {
+            $message = "Piešiniai įkelti sėkmingai.";
+
+        } else {
+            $message = "Nepavyko įkelti failo. Pabandykite dar kartą.";
+        }
+
+        $_SESSION['message'] = $message;
+        $_SESSION['upload_id'] = $upload_id;
     }
 
 

@@ -322,8 +322,18 @@ class MySQLDB
         }
         /* Return result array */
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
 
+    function getAvailableCompetitions(): ?array
+    {
+        $q = "SELECT * FROM competitions WHERE start_date <= NOW() AND end_date >= NOW()";
+        $result = mysqli_query($this->connection, $q);
 
+        if (!$result || (mysqli_num_rows($result) < 1)) {
+            return NULL;
+        }
+        /* Return result array */
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
     function getCurrentCompetition()
@@ -340,9 +350,24 @@ class MySQLDB
 
     function getTop10Paintings(): ?array
     {
-//        TODO: get top 10 paintings
 
-        $q = "SELECT * FROM paintings LIMIT 10";
+        $q = "SELECT paintings.id AS painting_id,
+                   avg_score AS score,
+                   image
+            FROM (SELECT fk_painting,
+                         (SUM(composition +
+                              colorfulness +
+                              compliance +
+                              originality) / (4 * COUNT(*))) AS avg_score
+                  FROM reviews
+                  GROUP BY fk_painting
+                  ORDER BY avg_score DESC) as scoring
+                     INNER JOIN paintings ON paintings.id = fk_painting
+                     INNER JOIN uploads ON uploads.id = fk_upload
+                     INNER JOIN users u on u.id = uploads.fk_user
+            ORDER BY avg_score DESC, u.birth_date DESC
+            LIMIT 10;";
+
         $result = mysqli_query($this->connection, $q);
 
         /* Error occurred, return given name by default */
@@ -353,22 +378,61 @@ class MySQLDB
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
-    function getUnratedPaintingsByUser($username): ?array
+    function getUnratedPaintingsId($userid): ?array
     {
-        $q = "SELECT * FROM paintings";
+        $q = "SELECT id FROM paintings
+            WHERE id NOT IN (SELECT fk_painting FROM reviews WHERE fk_user = $userid)
+            ORDER BY id";
         $result = mysqli_query($this->connection, $q);
 
         /* Error occurred, return given name by default */
         if (!$result || (mysqli_num_rows($result) < 1)) {
             return NULL;
         }
+
+        /* Fetch entire result array */
+        $assocArray = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+        /* Using array_column to get only the ids from the associative array */
         /* Return result array */
-        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        return array_column($assocArray, 'id');
     }
 
-    function addNewCompetion($topic, $start_date, $end_date)
+    function createCompetition($topic, $start_date, $end_date)
     {
         $q = "INSERT INTO competitions (topic, start_date, end_date, creation_date) VALUES ('$topic', '$start_date', '$end_date', NOW())";
+        return mysqli_query($this->connection, $q);
+    }
+
+    function getUploadImages($upload_id): ?array
+    {
+        $q = "SELECT * FROM paintings WHERE fk_upload = $upload_id";
+        $result = mysqli_query($this->connection, $q);
+
+        /* Error occurred, return given name by default */
+        if (!$result || (mysqli_num_rows($result) < 1)) {
+            return NULL;
+        }
+        /* Return result array */
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    function getPaintingById($id)
+    {
+        $q = "SELECT * FROM paintings WHERE id = $id";
+        $result = mysqli_query($this->connection, $q);
+
+        /* Error occurred, return given name by default */
+        if (!$result || (mysqli_num_rows($result) < 1)) {
+            return NULL;
+        }
+        /* Return result array */
+        return mysqli_fetch_array($result);
+    }
+
+    function createReview($user_id, $painting_id, $composition, $colorfulness, $compliance, $originality)
+    {
+        $q = "INSERT INTO reviews (fk_user, fk_painting, composition, colorfulness, compliance, originality, creation_date) VALUES ($user_id, $painting_id, $composition, $colorfulness, $compliance, $originality, NOW())";
         return mysqli_query($this->connection, $q);
     }
 

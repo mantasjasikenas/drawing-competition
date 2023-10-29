@@ -33,12 +33,6 @@ if ($session->logged_in) {
                 <br>
                 <div style="text-align: center;">
                     <h1>Galerija</h1>
-                    <?php
-                    $topic = $database->getCurrentCompetition()['topic'];
-                    echo '<h2 style="margin-bottom: unset">Konkurso tema</h2>';
-                    echo '<h3 style="margin-top: unset; color: rgba(50,194,137,0.62)">' . $topic . '</h3>';
-                    ?>
-
                 </div>
                 <br>
 
@@ -49,11 +43,15 @@ if ($session->logged_in) {
                     if ($result && count($result) > 0) {
                         echo '<h2 style="margin-top: unset; text-align: center">Geriausi 10 darbų</h2>';
 
-                        echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
+                        echo '<div style="display: flex; flex-wrap: wrap; justify-content: center; gap : 6px">';
 
                         foreach ($result as $row) {
                             $imageData = $row['image'];
+                            $score = $row['score'];
+                            echo '<div style="text-align: center;">';
                             echo '<img src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px;">';
+//                            echo '<h3 style="margin-top: unset; margin-bottom: unset">' . $score . '</h3>';
+                            echo '</div>';
                         }
 
                         echo '</div>';

@@ -150,7 +150,7 @@ class AdminProcess
 
         global $database, $form;
 
-        $database->addNewCompetion($topic, $start_date, $end_date);
+        $database->createCompetition($topic, $start_date, $end_date);
 
         header("Location: " . $session->referrer);
     }
