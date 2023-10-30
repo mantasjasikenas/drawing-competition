@@ -15,7 +15,13 @@ if ($conn->connect_error) {
 // Check if an image file was uploaded
 if (isset($_FILES["images"])) {
     $competition_id = $_POST['competition'];
-    $style = $_POST['style'];
+    $styles = $_POST['style'];
+
+    $style = "";
+
+    foreach ($styles as $style_item) {
+        $style .= $style_item . " ";
+    }
 
     if ($style == "default") {
         $style = "";
@@ -27,9 +33,13 @@ if (isset($_FILES["images"])) {
 // convert style to css class
 
 
-    $sql = "INSERT INTO uploads (comment, creation_date, fk_user, fk_competition) VALUES ('" . $_POST['comment'] . "', NOW(), '" . $session->id . "', '" . $competition_id . "')";
+    $sql = "INSERT INTO uploads (comment, style, creation_date, fk_user, fk_competition) 
+            VALUES ('" . $_POST['comment'] . "', '" . $style . "', NOW(), '" . $session->id . "', '" . $competition_id . "')";
     $statement = $conn->prepare($sql);
     $statement->execute();
+
+//    echo error
+    echo mysqli_error($conn);
 
     $upload_id = mysqli_insert_id($conn);
 
@@ -50,7 +60,7 @@ if (isset($_FILES["images"])) {
             $message = "Piešiniai įkelti sėkmingai.";
 
         } else {
-            $message = "Nepavyko įkelti failo. Pabandykite dar kartą.";
+            $message = "Nepavyko įkelti failo. Pabandykite dar kartą." . mysqli_error($conn);
         }
 
         $_SESSION['message'] = $message;

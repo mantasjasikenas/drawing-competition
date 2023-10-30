@@ -8,6 +8,7 @@ if ($session->logged_in) {
         <meta http-equiv="X-UA-Compatible" content="IE=9; text/html; charset=utf-8"/>
         <title>Įkelti paveikslėlį</title>
         <link href="include/styles.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="include/style.php" media="screen">
     </head>
     <body>
     <table class="center">
@@ -48,8 +49,12 @@ if ($session->logged_in) {
                         foreach ($result as $row) {
                             $imageData = $row['image'];
                             $score = $row['score'];
+                            $style = $row['style'];
+
+
+
                             echo '<div style="text-align: center;">';
-                            echo '<img src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px;">';
+                            echo '<img class="' . $style . '" src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px;">';
 //                            echo '<h3 style="margin-top: unset; margin-bottom: unset">' . $score . '</h3>';
                             echo '</div>';
                         }

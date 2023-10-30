@@ -9,23 +9,11 @@ if ($session->logged_in) {
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=9; text/html; charset=utf-8"/>
         <title>Įkelti paveikslėlį</title>
+
         <link href="include/styles.css" rel="stylesheet" type="text/css"/>
-        <style>
-            .oval {
-                width: 320px;
-                height: 160px;
-                background: #a84909;
-                border-radius: 50%;
-            }
+        <link rel="stylesheet" href="include/style.php" media="screen">
 
-            .border {
-                border: 4px solid rgba(50, 194, 137, 0.62);
-            }
-
-            .rounded {
-                border-radius: 10%;
-            }
-        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </head>
     <body>
     <table class="center">
@@ -65,7 +53,7 @@ if ($session->logged_in) {
 
                 <div style="padding: 10px; text-align: center">
 
-                    <form enctype="multipart/form-data" method="post" action="actions/upload.php">
+                    <form enctype="multipart/form-data" method="post" action="actions/handle-upload.php">
                         <?php
                         $competitions = $database->getAvailableCompetitions();
 
@@ -73,15 +61,20 @@ if ($session->logged_in) {
                             echo '<label for="competition">Pasirinkite konkursą</label><br>';
                             echo '<select name="competition" id="competition">';
                             foreach ($competitions as $competition) {
-                                echo '<option value="' . $competition['id'] . '">' . $competition['topic'] . ' ' . $competition['start_date'] . ' - ' . $competition['end_date'] . '</option>';
+//                                echo '<option value="' . $competition['id'] . '">' . $competition['topic'] . ' ' . $competition['start_date'] . ' - ' . $competition['end_date'] . '</option>';
+                                echo '<option value="' . $competition['id'] . '" data-image="' . base64_encode($competition['image']) . '">' . $competition['topic'] . ' ' . $competition['start_date'] . ' - ' . $competition['end_date'] . '</option>';
+
                             }
                             echo '</select><br><br>';
+
+//                            show competion image
+                            echo '<img id="competition_image" style="height: 160px; object-fit: cover" src="data:image/jpeg;base64,' . base64_encode($competitions[0]['image']) . '"/><br><br>';
                         }
 
 
                         echo '<label for="style">Pasirinkite paveikslėlių stilių</label><br>';
-                        echo '<select name="style" id="style">';
-                        echo '<option value="default">Numatytasis</option>';
+                        echo '<select name="style[]" id="style" multiple>';
+//                        echo '<option value="default">Numatytasis</option>';
                         echo '<option value="border">Rėmelis</option>';
                         echo '<option value="rounded">Apvalūs kampai</option>';
                         echo '<option value="oval">Ovalas</option>';
@@ -135,6 +128,17 @@ if ($session->logged_in) {
             </td>
         </tr>
     </table>
+
+    <script>
+        $('#competition').change(function () {
+            const selected_option = $('#competition').find(":selected");
+            const image_data = selected_option.data('image');
+            console.log("Image data: ", image_data);
+            console.log("Selected option: ", selected_option);
+
+            $('#competition_image').attr('src', 'data:image/jpeg;base64,' + image_data);
+        });
+    </script>
     </body>
     </html>
     <?php

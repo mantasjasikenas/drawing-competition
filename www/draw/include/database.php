@@ -353,7 +353,8 @@ class MySQLDB
 
         $q = "SELECT paintings.id AS painting_id,
                    avg_score AS score,
-                   image
+                   image,
+                   style
             FROM (SELECT fk_painting,
                          (SUM(composition +
                               colorfulness +
