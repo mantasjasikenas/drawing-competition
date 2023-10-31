@@ -27,6 +27,10 @@ class AdminProcess
             $this->procDeleteBannedUser();
         } else if (isset($_POST['create_comp'])) {
             $this->procCreateComp();
+        } else if ($_GET['rp']) {
+            $this->removeCompPaintings();
+        } else if ($_GET['rc']) {
+            $this->removeCompetition();
         } /* Should not get here, redirect to home page */ else {
             header("Location: ../index.php");
         }
@@ -143,14 +147,45 @@ class AdminProcess
 
     function procCreateComp()
     {
-        global $session;
+        global $database, $session, $form;
+
         $topic = $_POST['topic'];
         $start_date = $_POST['start_date'];
         $end_date = $_POST['end_date'];
+        $img = $_FILES['img']['tmp_name'];
 
-        global $database, $form;
+        if (!$img) {
+            $form->setError("img", "* Nepasirinktas paveikslėlis<br>");
+        }
 
-        $database->createCompetition($topic, $start_date, $end_date);
+        if (!$topic) {
+            $form->setError("topic", "* Nepasirinkta konkurso tema<br>");
+        }
+
+        if (!$start_date) {
+            $form->setError("start_date", "* Nepasirinkta konkurso pradžios data<br>");
+        }
+
+        if (!$end_date) {
+            $form->setError("end_date", "* Nepasirinkta konkurso pabaigos data<br>");
+        }
+
+        if ($start_date > $end_date) {
+            $form->setError("end_date", "* Konkurso pabaigos data negali būti ankstesnė nei pradžios data<br>");
+        }
+
+        if ($form->num_errors > 0) {
+            $_SESSION['value_array'] = $_POST;
+            $_SESSION['error_array'] = $form->getErrorArray();
+        } else {
+            $img_content = file_get_contents($img);
+            $res = $database->createCompetition($topic, $start_date, $end_date, $img_content);
+
+            if (!$res) {
+                $form->setError("topic", "* Nepavyko sukurti konkurso<br>");
+            }
+        }
+
 
         header("Location: " . $session->referrer);
     }
@@ -179,6 +214,65 @@ class AdminProcess
         }
         return $subuser;
     }
+
+    function removeCompPaintings()
+    {
+        global $session, $database, $form;
+        $comp_id = $this->checkCompetitionId("delcomppaint");
+
+        if ($form->num_errors > 0) {
+            $_SESSION['value_array'] = $_POST;
+            $_SESSION['error_array'] = $form->getErrorArray();
+        } else {
+            $q = "DELETE FROM uploads WHERE fk_competition = '$comp_id'";
+            $res = $database->query($q);
+
+            if (!$res) {
+                $form->setError("delcomppaint", "* Nepavyko ištrinti paveikslėlių<br>");
+            }
+
+        }
+        header("Location: " . $session->referrer);
+    }
+
+    function removeCompetition()
+    {
+        global $session, $database, $form;
+        $comp_id = $this->checkCompetitionId("delcomp");
+
+        if ($form->num_errors > 0) {
+            $_SESSION['value_array'] = $_POST;
+            $_SESSION['error_array'] = $form->getErrorArray();
+        } else {
+            $q = "DELETE FROM competitions WHERE id = '$comp_id'";
+            $res = $database->query($q);
+
+            if (!$res) {
+                $form->setError("delcomp", "* Nepavyko ištrinti konkurso<br>");
+            }
+
+        }
+        header("Location: " . $session->referrer);
+    }
+
+    function checkCompetitionId($uname): string
+    {
+        global $database, $form;
+
+
+        $id = $_REQUEST[$uname];
+        $field = $uname;
+
+        $id = stripslashes($id);
+
+        if (!$database->query("SELECT * FROM competitions WHERE id = '$id'")) {
+            $form->setError($field, "* Nepavyko rasti nurodyto konkurso<br>");
+        }
+
+
+        return $id;
+    }
+
 
 }
 

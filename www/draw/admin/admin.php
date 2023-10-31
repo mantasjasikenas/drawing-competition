@@ -66,7 +66,18 @@ function displayUsers()
 function displayCompetitions()
 {
     global $database;
-    $q = "SELECT * FROM " . TBL_COMPETITIONS . " ORDER BY start_date DESC";
+    $q = "SELECT competitions.id,
+                competitions.image,
+               competitions.topic,
+               competitions.start_date,
+               competitions.end_date,
+               competitions.creation_date,
+               COUNT(paintings.id) AS submissions
+        FROM paintings
+                 LEFT JOIN uploads ON paintings.fk_upload = uploads.id
+                 RIGHT JOIN competitions ON uploads.fk_competition = competitions.id
+        GROUP BY competitions.id";
+
     $result = $database->query($q);
 
     $num_rows = mysqli_num_rows($result);
@@ -85,25 +96,41 @@ function displayCompetitions()
 
     echo "<tr>
             <td><b>Id</b></td>
+            <td><b>Nuotrauka</b></td>
             <td><b>Tema</b></td>
-            <td><b>Sukurimo data</b></td>
+            <td><b>Sukūrimo data</b></td>
             <td><b>Pradžios data</b></td>
             <td><b>Pabaigos data</b></td>
+            <td><b>Pateiktų piešinių skaičius</b></td>
+            <td><b>Veiksmai</b></td>
         </tr>\n";
 
     for ($i = 0; $i < $num_rows; $i++) {
         $id = mysqli_result($result, $i, "id");
+        $image = mysqli_result($result, $i, "image");
         $topic = mysqli_result($result, $i, "topic");
         $start_date = mysqli_result($result, $i, "start_date");
         $end_date = mysqli_result($result, $i, "end_date");
         $creation_date = mysqli_result($result, $i, "creation_date");
+        $submissions = mysqli_result($result, $i, "submissions");
 
         echo "<tr>
                 <td>$id</td>
+                <td><img style='height: 40px; object-fit: cover' src='data:image/jpeg;base64," . base64_encode($image) . "'/></td>
                 <td>$topic</td>
                 <td>$creation_date</td>
                 <td>$start_date</td>
                 <td>$end_date</td>
+                <td>$submissions</td>
+                <td>
+                    <a href='adminprocess.php?rp=1&delcomppaint=$id' 
+                       onclick='return confirm(\"Ar tikrai norite ištrinti visus konkurso $topic piešinius?\");'>Trinti piešinius</a> 
+                    |
+                     <a href='adminprocess.php?rc=1&delcomp=$id' 
+                       onclick='return confirm(\"Ar tikrai norite ištrinti konkursą $topic?\");'>Trinti konkursą</a> 
+               
+               </td>
+
             </tr>\n";
     }
     echo "</table><br>\n";
@@ -149,17 +176,29 @@ function displayBannedUsers()
 
 function createNewDrawingCompetition()
 {
-    echo '<form action="adminprocess.php" method="POST">
-            <input type="hidden" name="create_comp">
+    global $form;
 
+    echo '<form enctype="multipart/form-data" action="adminprocess.php" method="POST">
+            <input type="hidden" name="create_comp">
+           
             <label for="name">Konkurso tema:</label><br>
-            <input type="text" id="name" name="topic" required><br><br>
+            <input type="text" id="name" name="topic" value="'
+        . $form->value("topic") . '"><br>' . $form->error("topic") . '
+            <br>
             
             <label for="start_date">Pradžios data:</label><br>
-            <input type="date" id="start_date" name="start_date" required><br><br>
+            <input type="date" id="start_date" name="start_date" value="'
+        . $form->value("start_date") . '"><br>' . $form->error("start_date") . '
+            <br>
             
             <label for="end_date">Pabaigos data:</label><br>
-            <input type="date" id="end_date" name="end_date" required><br><br>
+            <input type="date" id="end_date" name="end_date" value="'
+        . $form->value("end_date") . '"><br>' . $form->error("end_date") . '
+            <br>
+            
+            <label for="img">Pasirinkite paveikslėlį:</label><br>
+            <input type="file" id="img" name="img" accept="image/*"><br>' . $form->error("img") . '
+            <br><br>
             
             <input type="submit" value="Sukurti konkursą">
         </form>';
@@ -230,7 +269,7 @@ if (!$session->isAdmin()) {
                 <br>
                 <?php
                 if ($form->num_errors > 0) {
-                    echo "<font size=\"4\" color=\"#ff0000\">" . "!*** Error with request, please fix</font><br><br>";
+                    echo "<font size=\"4\" color=\"#ff0000\">" . "!*** Įvyko klaida!</font><br><br>";
                 }
                 ?>
                 <table style=" text-align:left;" border="0" cellspacing="5" cellpadding="5">

@@ -399,10 +399,14 @@ class MySQLDB
         return array_column($assocArray, 'id');
     }
 
-    function createCompetition($topic, $start_date, $end_date)
+    function createCompetition($topic, $start_date, $end_date, $imgContent): bool
     {
-        $q = "INSERT INTO competitions (topic, start_date, end_date, creation_date) VALUES ('$topic', '$start_date', '$end_date', NOW())";
-        return mysqli_query($this->connection, $q);
+        $q = "INSERT INTO competitions (topic, start_date, end_date, creation_date, image) VALUES ('$topic', '$start_date', '$end_date', NOW(), ?)";
+
+        $statement = $this->connection->prepare($q);
+        $statement->bind_param('s', $imgContent);
+
+        return $statement->execute();
     }
 
     function getUploadImages($upload_id): ?array
