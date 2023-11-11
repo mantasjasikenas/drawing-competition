@@ -1,5 +1,5 @@
 <?php
-global $session, $database;
+global $session, $database, $form;
 include("include/session.php");
 
 
@@ -42,7 +42,7 @@ if ($session->logged_in) {
                     <?php
 
                     if (isset($_SESSION['message'])) {
-                        echo '<h3 style="color: red">' . $_SESSION['message'] . '</h3>';
+                        echo '<h3 style="color: darkseagreen">' . $_SESSION['message'] . '</h3>';
                         unset($_SESSION['message']);
                     }
 
@@ -74,7 +74,7 @@ if ($session->logged_in) {
 
                         echo '<label for="style">Pasirinkite paveikslėlių stilių</label><br>';
                         echo '<select name="style[]" id="style" multiple>';
-//                        echo '<option value="default">Numatytasis</option>';
+                        //                        echo '<option value="default">Numatytasis</option>';
                         echo '<option value="border">Rėmelis</option>';
                         echo '<option value="rounded">Apvalūs kampai</option>';
                         echo '<option value="oval">Ovalas</option>';
@@ -84,12 +84,14 @@ if ($session->logged_in) {
                         ?>
 
                         <label for="files">Pasirinkite piešinių nuotraukas</label><br>
-                        <input name="images[]" multiple type="file" id="file[]" accept="image/*"
-                               required oninvalid="this.setCustomValidity('Privaloti pateikti bent vieną piešinį.')"
-                               onchange="this.setCustomValidity('')"><br><br>
-                        <textarea required name="comment" placeholder="Komentaras"
-                                  cols="40" rows="5"></textarea
-                        >
+                        <input name="images[]" multiple type="file" id="file[]" accept="image/*">
+                        <br><?php echo $form->error("images") ?>
+                        <!--oninvalid="this.setCustomValidity('Privaloti pateikti bent vieną piešinį.')"
+                       onchange="this.setCustomValidity('')"--><br><br>
+
+                        <textarea name="comment" placeholder="Komentaras"
+                                  cols="40" rows="5"><?php echo $form->value("comment") ?></textarea>
+                        <br><?php echo $form->error("comment") ?>
                         <br><br>
                         <input type="submit" value="Pateikti">
                     </form>

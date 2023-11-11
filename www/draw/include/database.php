@@ -399,6 +399,52 @@ class MySQLDB
         return array_column($assocArray, 'id');
     }
 
+    function getUserPaintingsAndScores($userid): ?array
+    {
+        $q =
+        "SELECT paintings.id AS painting_id,
+          IFNULL(avg_score,0) AS score,
+          IFNULL(avg_composition,'-') AS composition,
+          IFNULL(avg_colorfulness,'-') AS colorfulness,
+          IFNULL(avg_compliance,'-') AS compliance,
+          IFNULL(avg_originality,'-') AS originality,
+          image,
+          style
+       FROM paintings
+       LEFT JOIN uploads ON uploads.id = fk_upload
+       LEFT JOIN users u on u.id = uploads.fk_user
+       LEFT JOIN (SELECT fk_painting,
+                         AVG(composition) AS avg_composition,
+                        AVG(colorfulness) AS avg_colorfulness,
+                        AVG(compliance) AS avg_compliance,
+                        AVG(originality) AS avg_originality,
+                        (SUM(composition +
+                             colorfulness +
+                             compliance +
+                             originality) / (4 * COUNT(*))) AS avg_score
+                  FROM reviews
+                  GROUP BY fk_painting) as scoring 
+             ON paintings.id = scoring.fk_painting
+       WHERE u.id = $userid
+       ORDER BY score DESC, u.birth_date DESC";
+
+//        $statement = $this->connection->prepare($q);
+//        $statement->bind_param('i', $userid);
+//
+//        $statement->execute();
+//
+//        $result = $statement->get_result();
+
+        $result = mysqli_query($this->connection, $q);
+
+        /* Error occurred, return given name by default */
+        if (!$result || (mysqli_num_rows($result) < 1)) {
+            return NULL;
+        }
+        /* Return result array */
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
     function createCompetition($topic, $start_date, $end_date, $imgContent): bool
     {
         $q = "INSERT INTO competitions (topic, start_date, end_date, creation_date, image) VALUES ('$topic', '$start_date', '$end_date', NOW(), ?)";

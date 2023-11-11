@@ -16,6 +16,7 @@ if (isset($session) && $session->logged_in) {
             . "[<a href=\"" . $path . "userinfo.php?user=$session->username\">Mano paskyra</a>] &nbsp;&nbsp;"
             . "[<a href=\"" . $path . "useredit.php\">Redaguoti paskyrą</a>] &nbsp;&nbsp;"
             . "[<a href=\"" . $path . "upload-image.php\">Įkelti paveikslėlį</a>] &nbsp;&nbsp;"
+            . "[<a href=\"" . $path . "portfolio.php\">Portfolio</a>] &nbsp;&nbsp;"
             . "[<a href=\"" . $path . "gallery.php\">Galerija</a>] &nbsp;&nbsp;";
 
         if ($session->isEvaluator() || $session->isAdmin()) {
