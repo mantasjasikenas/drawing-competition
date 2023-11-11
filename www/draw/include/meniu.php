@@ -24,6 +24,7 @@ if (isset($session) && $session->logged_in) {
         }
 
         if ($session->isAdmin()) {
+            echo "[<a href=\"" . $path . "reports.php\">Pranešimai</a>] &nbsp;&nbsp;";
             echo "[<a href=\"" . $path . "admin/admin.php\">Administratoriaus sąsaja</a>] &nbsp;&nbsp;";
         }
         echo "[<a href=\"" . $path . "process.php\">Atsijungti</a>]";

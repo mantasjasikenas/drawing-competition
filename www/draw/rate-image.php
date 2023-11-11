@@ -121,11 +121,35 @@ if ($session->logged_in && ($session->isAdmin() || $session->isEvaluator())) {
                         echo '</div>';
 
                         echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
-                        echo '<button style="margin: 20px; 
+                        echo '<button style="margin: 20px; height: 30px; 
                                 width: 100px; background-color: darkseagreen; border-radius: 5px; border: none; 
                                 color: white; font-size: 16px; font-weight: bold; cursor: pointer;" 
                                 onclick="toggleFilter()"
                                 >B/W filtras</button>';
+
+
+                        echo '
+                        <div>
+                            <form method="POST" action="actions/handle-report.php" style="justify-content: center">
+                                <input type="hidden" name="painting_id" value=' . $id . '>
+                                    
+                                <input type="text" name="cause" placeholder="Priežastis" style="margin-top: 20px; height: 30px;
+                                    width: 200px; border-radius: 5px; 
+                                    color: black; font-size: 16px; font-weight: bold;">
+                                    
+                                    <br>
+                                    
+                                    <input 
+                                    type="submit"
+                                    maxlength="254"
+                                    name="report"
+                                    value="Pranešti"
+                                    style="margin-top: 5px; height: 30px; 
+                                    width: 100px; background-color: red; border-radius: 5px; border: none; 
+                                    color: white; font-size: 16px; font-weight: bold; cursor: pointer;">
+                            </form>
+                        </div>';
+
                         echo '</div>';
 
 

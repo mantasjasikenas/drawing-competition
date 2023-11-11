@@ -31,7 +31,12 @@ class AdminProcess
             $this->removeCompPaintings();
         } else if ($_GET['rc']) {
             $this->removeCompetition();
-        } /* Should not get here, redirect to home page */ else {
+        } else if ($_GET['delreport']) {
+            $this->deleteReport();
+
+        } else if ($_GET['delpaint']) {
+            $this->deletePainting();
+        } else {
             header("Location: ../index.php");
         }
     }
@@ -271,6 +276,35 @@ class AdminProcess
 
 
         return $id;
+    }
+
+    function deleteReport()
+    {
+        global $session, $database, $form;
+
+        $id = $_REQUEST['id'];
+
+        $id = stripslashes($id);
+
+        if (!$database->query("DELETE FROM reports WHERE id = '$id'")) {
+            $form->setError("global", "* Nepavyko ištrinti pranešimo<br>");
+        }
+
+        header("Location: " . $session->referrer);
+    }
+
+    function deletePainting()
+    {
+        global $session, $database, $form;
+
+        $id = $_REQUEST['id'];
+        $id = stripslashes($id);
+
+        if (!$database->query("DELETE FROM paintings WHERE id = '$id'")) {
+            $form->setError("global", "* Nepavyko ištrinti paveikslėlio<br>");
+        }
+
+        header("Location: " . $session->referrer);
     }
 
 

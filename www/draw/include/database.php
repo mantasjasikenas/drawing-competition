@@ -382,7 +382,8 @@ class MySQLDB
     function getUnratedPaintingsId($userid): ?array
     {
         $q = "SELECT id FROM paintings
-            WHERE id NOT IN (SELECT fk_painting FROM reviews WHERE fk_user = $userid)
+            WHERE id NOT IN (SELECT fk_painting FROM reviews WHERE fk_user = $userid) AND 
+                  id NOT IN (SELECT fk_painting FROM reports WHERE fk_user = $userid)
             ORDER BY id";
         $result = mysqli_query($this->connection, $q);
 
@@ -399,10 +400,20 @@ class MySQLDB
         return array_column($assocArray, 'id');
     }
 
+    function reportPainting($painting_id, $user_id, $cause): bool
+    {
+        $q = "INSERT INTO reports (fk_painting, fk_user, cause, creation_date) VALUES ($painting_id, $user_id, '$cause', NOW())";
+        $result = mysqli_query($this->connection, $q);
+
+//        echo mysqli_error($this->connection);
+
+        return $result;
+    }
+
     function getUserPaintingsAndScores($userid): ?array
     {
         $q =
-        "SELECT paintings.id AS painting_id,
+            "SELECT paintings.id AS painting_id,
           IFNULL(avg_score,0) AS score,
           IFNULL(avg_composition,'-') AS composition,
           IFNULL(avg_colorfulness,'-') AS colorfulness,
@@ -438,6 +449,27 @@ class MySQLDB
         $result = mysqli_query($this->connection, $q);
 
         /* Error occurred, return given name by default */
+        if (!$result || (mysqli_num_rows($result) < 1)) {
+            return NULL;
+        }
+        /* Return result array */
+        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    function getUnsolvedReports (): ?array
+    {
+        $q = "SELECT reports.id          AS report_id,
+                       reports.fk_user     AS user_id,
+                       reports.fk_painting AS painting_id,
+                       reports.creation_date,
+                       reports.cause       AS cause,
+                       users.username,
+                       paintings.image     AS image
+                FROM reports
+                         INNER JOIN users ON reports.fk_user = users.id
+                         INNER JOIN paintings ON reports.fk_painting = paintings.id";
+        $result = mysqli_query($this->connection, $q);
+
         if (!$result || (mysqli_num_rows($result) < 1)) {
             return NULL;
         }
