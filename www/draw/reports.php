@@ -43,7 +43,7 @@ if ($session->logged_in) {
                 </div>
                 <br>
 
-                <div style="padding: 10px;">
+                <div style="padding: 10px; display: flex; justify-content: center">
                     <?php
                     $result = $database->getUnsolvedReports();
 

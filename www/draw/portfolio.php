@@ -57,7 +57,7 @@ if ($session->logged_in) {
                             $originality = $row['originality'];
 
 
-                            echo '<div style="text-align: center; border: solid 2px black">';
+                            echo '<div style="text-align: center; border: solid 2px black; border-radius: 5px; padding: 5px; background-color: #c3fdb8;">';
 
                             echo '<img class="' . $style . '" src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 200px; width: auto">';
 
