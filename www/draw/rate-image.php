@@ -1,8 +1,7 @@
 <?php
 global $session, $database;
 include("include/session.php");
-//Jei prisijunges Administratorius ar Valdytojas vykdomas operacija3 kodas
-if ($session->logged_in && ($session->isAdmin() || $session->isEvaluator())) {
+if ($session->logged_in && $session->isEvaluator()) {
     ?>
     <html>
     <head>

@@ -1,8 +1,12 @@
 <?php
 global $session, $form;
+global $database;
 include("../include/session.php");
 
-global $database;
+if (!$session->isParticipant()) {
+    header("Location: ../index.php");
+    exit();
+}
 
 
 $competition = $_POST['competition'];

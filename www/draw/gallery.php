@@ -1,7 +1,8 @@
 <?php
 global $database, $session;
 include("include/session.php");
-if ($session->logged_in) {
+if ($session->logged_in && ($session->isParticipant() || $session->isEvaluator())
+) {
     ?>
     <html>
     <head>
@@ -50,7 +51,6 @@ if ($session->logged_in) {
                             $imageData = $row['image'];
                             $score = $row['score'];
                             $style = $row['style'];
-
 
 
                             echo '<div style="text-align: center;">';

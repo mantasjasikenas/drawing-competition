@@ -1,8 +1,12 @@
 <?php
 global $session;
+global $database;
 include("../include/session.php");
 
-global $database;
+if (!$session->isEvaluator()) {
+    header("Location: ../index.php");
+    exit();
+}
 
 $painting_id = $_POST['painting_id'];
 $cause = $_POST['cause'];

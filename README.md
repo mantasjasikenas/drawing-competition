@@ -26,20 +26,19 @@ docker-compose up --build --force-recreate --no-deps -d
 docker-compose down -v --rmi all
 ```
 
-#### Connect to the container named redis
+#### Connect to the container named db
 
 ```bash
-docker-compose exec redis sh
+docker-compose exec db sh
 ```
 
-Combined
-
-```bash
-docker-compose down -v --rmi all;  docker-compose up --build --force-recreate --no-deps -d
-```
-
-Launch the application on VM
+#### Launch the application on VM
 
 ```bash
 docker logout
 docker-compose up --build --force-recreate --no-deps -d
+
+# stops and starts the containers
+docker-compose stop
+docker-compose start
+```

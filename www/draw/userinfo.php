@@ -56,7 +56,9 @@ if ($session->logged_in) {
                     echo "<br><table border=1 style=\"text-align:left;\" cellspacing=\"0\" cellpadding=\"3\"><tr><td><b>Vartotojo vardas: </b></td>"
                         . "<td>" . $req_user_info['username'] . "</td></tr>"
                         . "<tr><td><b>E-paštas:</b></td>"
-                        . "<td>" . $req_user_info['email'] . "</td></tr></table><br>";
+                        . "<td>" . $req_user_info['email'] . "</td></tr>"
+                        . "<tr><td><b>Gimimo data:</b></td>"
+                        . "<td>" . $req_user_info['birth_date'] . "</td></tr></table><br>";
                     //Jei vartotojas neprisijungęs, rodoma prisijungimo forma
                     //Jei atsiranda klaidų, rodomi pranešimai.
                     ?>

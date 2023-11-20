@@ -1,7 +1,8 @@
 <?php
 global $database, $session;
 include("include/session.php");
-if ($session->logged_in) {
+if ($session->logged_in && $session->isParticipant()
+) {
     ?>
     <html lang="lt">
     <head>

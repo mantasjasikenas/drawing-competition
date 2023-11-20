@@ -1,8 +1,12 @@
 <?php
 global $session;
+global $database;
 include("../include/session.php");
 
-global $database;
+if (!$session->isEvaluator()) {
+    header("Location: ../index.php");
+    exit();
+}
 
 
 $composition = $_POST['composition'];

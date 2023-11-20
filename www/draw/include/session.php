@@ -433,6 +433,11 @@ class Session
         return ($this->userlevel == EVALUATOR_LEVEL);
     }
 
+    function isParticipant()
+    {
+        return ($this->userlevel == USER_LEVEL);
+    }
+
     /**
      * generateRandID - Generates a string made up of randomized
      * letters (lower and upper case) and digits and returns
