@@ -45,17 +45,30 @@ if ($session->logged_in && ($session->isParticipant() || $session->isEvaluator()
                     if ($result && count($result) > 0) {
                         echo '<h2 style="margin-top: unset; text-align: center">Geriausi 10 darbų</h2>';
 
-                        echo '<div style="display: flex; flex-wrap: wrap; justify-content: center; gap : 6px">';
+                        echo '<div style="display: flex; flex-wrap: wrap; justify-content: center; gap : 12px">';
 
                         foreach ($result as $row) {
                             $imageData = $row['image'];
                             $score = $row['score'];
                             $style = $row['style'];
+                            $username = $row['username'];
+
+                            if ($score) {
+                                $score = round($score, 2);
+                            } else {
+                                $score = "-";
+                            }
 
 
-                            echo '<div style="text-align: center;">';
+                            echo '<div style="text-align: center; border: solid 2px black; border-radius: 5px; padding: 5px; background-color: #c3fdb8;">';
                             echo '<img class="' . $style . '" src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px;">';
-//                            echo '<h3 style="margin-top: unset; margin-bottom: unset">' . $score . '</h3>';
+
+                            echo '<h4 style="margin-top: unset; margin-bottom: unset">Įvertinimas</h4>';
+                            echo '<label style="margin-top: unset; margin-bottom: unset">' . $score . '</label>';
+
+                            echo '<h4 style="margin-top: unset; margin-bottom: unset">Autorius</h4>';
+                            echo '<label style="margin-top: unset; margin-bottom: unset">' . $username . '</label>';
+
                             echo '</div>';
                         }
 

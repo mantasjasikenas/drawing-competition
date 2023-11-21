@@ -53,7 +53,7 @@ if ($session->logged_in) {
                     /* Display requested user information */
                     $req_user_info = $database->getUserInfo($req_user);
 
-                    echo "<br><table border=1 style=\"text-align:left;\" cellspacing=\"0\" cellpadding=\"3\"><tr><td><b>Vartotojo vardas: </b></td>"
+                    echo "<br><table border=1 style=\"text-align:left; background-color: #c3fdb8;\" cellspacing=\"0\" cellpadding=\"3\"><tr><td><b>Vartotojo vardas: </b></td>"
                         . "<td>" . $req_user_info['username'] . "</td></tr>"
                         . "<tr><td><b>E-paštas:</b></td>"
                         . "<td>" . $req_user_info['email'] . "</td></tr>"

@@ -354,7 +354,8 @@ class MySQLDB
         $q = "SELECT paintings.id AS painting_id,
                    avg_score AS score,
                    image,
-                   style
+                   style,
+                   username
             FROM (SELECT fk_painting,
                          (SUM(composition +
                               colorfulness +
@@ -502,7 +503,10 @@ class MySQLDB
 
     function getPaintingById($id)
     {
-        $q = "SELECT * FROM paintings WHERE id = $id";
+        $q = "SELECT * FROM paintings
+                INNER JOIN uploads ON uploads.id = fk_upload
+                WHERE paintings.id = $id
+        ";
         $result = mysqli_query($this->connection, $q);
 
         /* Error occurred, return given name by default */

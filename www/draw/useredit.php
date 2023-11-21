@@ -47,7 +47,7 @@ if ($session->logged_in) {
                         echo "";
                     }
                     ?>
-                    <table bgcolor=#C3FDB8>
+                    <table style="border: solid 2px black; border-radius: 5px; padding: 12px; background-color: #c3fdb8;">
                         <tr>
                             <td>
                                 <form action="process.php" style="text-align:left;" method="POST">

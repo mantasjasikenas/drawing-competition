@@ -8,6 +8,7 @@ if ($session->logged_in && $session->isEvaluator()) {
         <meta http-equiv="X-UA-Compatible" content="IE=9; text/html; charset=utf-8"/>
         <title>Įvertinti paveikslėlį</title>
         <link href="include/styles.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="include/style.php" media="screen">
         <style>
             a.left-arrow {
                 color: black;
@@ -95,8 +96,11 @@ if ($session->logged_in && $session->isEvaluator()) {
                             exit();
                         }
 
-                        $image = $database->getPaintingById($id);
-                        $imageData = $image['image'];
+                        $painting = $database->getPaintingById($id);
+                        $imageData = $painting['image'];
+                        $styleClass = $painting['style'];
+                        $comment = $painting['comment'];
+
                         $index = array_search($id, $unrated_images);
 
                         echo '<div style="display: flex; align-items: center">';
@@ -107,8 +111,8 @@ if ($session->logged_in && $session->isEvaluator()) {
                             echo "<a class='arrow left-arrow' href='rate-image.php?image=$prev_id'>&#8249;</a>";
                         }
 
-                        echo '<img id="img" src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 200px;">';
-
+//                        echo '<img id="img" src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 200px;">';
+                        echo '<img id="img" class="' . $styleClass . '"  style="height: 200px;" src="data:image/jpeg;base64,' . base64_encode($painting['image']) . '"/>';
 
                         if (count($unrated_images) > 1 && $index < count($unrated_images) - 1) {
                             $next_id = $unrated_images[$index + 1];
@@ -151,21 +155,26 @@ if ($session->logged_in && $session->isEvaluator()) {
 
                         echo '</div>';
 
+                        echo '<div style="display: flex; flex-wrap: wrap; justify-content: ; flex-direction: column">';
+                        echo '<label style="margin-top: unset; color: black; text-align: center; font-weight: bold;">Įkėlimo komentaras:</label>';
+                        echo '<label style="margin-top: unset; color: black; text-align: center">' . $comment . '</label>';
+                        echo '</div>';
+
 
                         echo "<div style=' padding-top: 24px; display: flex; flex-wrap: wrap; justify-content: center'>
                                 <form method='POST' action='actions/handle-review.php' style='justify-content: center'>
                                     <input type='hidden' name='painting_id' value='$id'>  
                                     
-                                    <label for='composition'>Kompozicija:</label><br>
+                                    <label style='font-weight: bold;' for='composition'>Kompozicija:</label><br>
                                     <input type='range' id='composition' name='composition' min='0' max='10'><br><br>
                                     
-                                    <label for='colorfulness'>Spalvingumas:</label><br>
+                                    <label style='font-weight: bold;' for='colorfulness'>Spalvingumas:</label><br>
                                     <input type='range' id='colorfulness' name='colorfulness' min='0' max='10'><br><br>
                                     
-                                    <label for='compliance'>Atitikimas tematikai:</label><br>
+                                    <label style='font-weight: bold;' for='compliance'>Atitikimas tematikai:</label><br>
                                     <input type='range' id='compliance' name='compliance' min='0' max='10'><br><br>
                                     
-                                    <label for='originality'>Originalumas:</label><br>
+                                    <label style='font-weight: bold;' for='originality'>Originalumas:</label><br>
                                     <input type='range' id='originality' name='originality' min='0' max='10'><br><br>
                                     
                                     <input type='submit' value='Palikti įvertinimą'>

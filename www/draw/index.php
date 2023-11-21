@@ -28,12 +28,12 @@ include("include/session.php");
                     <br><br>
                     <h1>Pagrindinis puslapis</h1>
 
-                    <div style="padding: 12px; background-color: #c3fdb8; width: fit-content; margin: auto;">
-                        <h3>Darbo pavadinimas</h3>
-                        <p>Piešinių konkursas</p>
+                    <div style="padding: 5px 60px; background-color: #c3fdb8; width: fit-content; margin: auto; border: solid 2px black; border-radius: 5px;">
+                        <h3 style="margin-bottom: 0">Darbo pavadinimas</h3>
+                        <p style="margin-top: 6px">Piešinių konkursas</p>
 
-                        <h3>Autorius</h3>
-                        <p>Mantas Jasikėnas IFF-1/4</p>
+                        <h3 style="margin-bottom: 0">Autorius</h3>
+                        <p style="margin-top: 6px">Mantas Jasikėnas IFF-1/4</p>
                     </div>
 
 
