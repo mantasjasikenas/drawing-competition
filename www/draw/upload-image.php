@@ -88,7 +88,7 @@ if ($session->logged_in && $session->isParticipant()) {
 
                             <textarea name="comment" placeholder="Komentaras"
                                       cols="40" rows="5">' . $form->value("comment") . '</textarea>
-                            <br><?php echo $form->error("comment") ?>
+                            <br> ' . $form->error("comment") . '
                             <br><br>
                             <input type="submit" value="Pateikti">
                     </form>';
