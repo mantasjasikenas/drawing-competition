@@ -14,6 +14,19 @@
 
 ## Launch application
 
+#### Clone the repository
+
+```bash
+git clone https://github.com/mantasjasikenas/drawing-competition.git
+```
+
+#### Change files rights
+
+```bash
+cd drawing-competition
+chmod 0755 ./ -R
+```
+
 #### Build and run the containers
 
 ```bash
