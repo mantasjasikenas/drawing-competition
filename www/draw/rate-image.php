@@ -67,7 +67,7 @@ if ($session->logged_in && $session->isEvaluator()) {
 
                     <?php
                     if (isset($_SESSION['message'])) {
-                        echo "<h4 style='color: rgb(130,255,47)'>" . $_SESSION['message'] . "</h4>";
+                        echo "<h4 style='color: #8fbc8f'>" . $_SESSION['message'] . "</h4>";
                         unset($_SESSION['message']);
                     }
                     ?>

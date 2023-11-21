@@ -28,24 +28,32 @@ include("include/session.php");
                     <br><br>
                     <h1>Pagrindinis puslapis</h1>
 
+                    <div style="padding: 12px; background-color: #c3fdb8; width: fit-content; margin: auto;">
+                        <h3>Darbo pavadinimas</h3>
+                        <p>Piešinių konkursas</p>
+
+                        <h3>Autorius</h3>
+                        <p>Mantas Jasikėnas IFF-1/4</p>
+                    </div>
+
 
                     <?php
 
-/*                    $result = $database->getCurrentCompetitionPaintings();
+                    /*                    $result = $database->getCurrentCompetitionPaintings();
 
-                    if ($result && count($result) > 0) {
+                                        if ($result && count($result) > 0) {
 
-                        echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
+                                            echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
 
-                        foreach ($result as $row) {
-                            $imageData = $row['image'];
-                            echo '<img src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px;">';
-                        }
+                                            foreach ($result as $row) {
+                                                $imageData = $row['image'];
+                                                echo '<img src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px;">';
+                                            }
 
-                        echo '</div>';
+                                            echo '</div>';
 
 
-                    }*/
+                                        }*/
 
                     ?>
 
