@@ -140,6 +140,11 @@ class Session
             $form->setError($field, "* Neįvestas slaptažodis");
         }
 
+       // check if user is banned
+        if ($database->usernameBanned($subuser)) {
+            $form->setError("user", "* Vartotojas užblokuotas");
+        }
+
         /* Return if form errors exist */
         if ($form->num_errors > 0) {
             return false;

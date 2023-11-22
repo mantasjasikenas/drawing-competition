@@ -80,8 +80,14 @@ class AdminProcess
             header("Location: " . $session->referrer);
         } /* Delete user from database */ else {
             $q = "DELETE FROM " . TBL_USERS . " WHERE username = '$subuser'";
-            $database->query($q);
-            $_SESSION['message'] = "Naudotojas ištrintas sėkmingai!";
+            $res = $database->query($q);
+
+            if (!$res) {
+                $_SESSION['error'] = "Nepavyko ištrinti naudotojo!";
+            } else {
+                $_SESSION['message'] = "Naudotojas ištrintas sėkmingai!";
+            }
+
             header("Location: " . $session->referrer);
         }
     }
@@ -121,8 +127,24 @@ class AdminProcess
             $_SESSION['error_array'] = $form->getErrorArray();
             header("Location: " . $session->referrer);
         } else {
-//            $q = "DELETE FROM " . TBL_USERS . " WHERE username = '$subuser'";
-//            $database->query($q);
+            // Check if user is trying to ban himself or not already banned
+            $q = "SELECT username FROM " . TBL_BANNED_USERS . " WHERE username = '$subuser'";
+            $result = $database->query($q);
+            $banned_users = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+            // If user is not banned
+            if (count($banned_users) == 0) {
+                // If user is not trying to ban himself
+                if (strcmp($subuser, $session->username) == 0) {
+                    $_SESSION['error'] = "Negalima užblokuoti savęs!";
+                    header("Location: " . $session->referrer);
+                    return;
+                }
+            } else {
+                $_SESSION['error'] = "Naudotojas jau užblokuotas!";
+                header("Location: " . $session->referrer);
+                return;
+            }
 
             $q = "INSERT INTO " . TBL_BANNED_USERS . " VALUES ('$subuser', $session->time)";
             $database->query($q);
