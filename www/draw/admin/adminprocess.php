@@ -188,6 +188,20 @@ class AdminProcess
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
         } else {
+            // Check if image file is an actual image or fake image
+            $check = getimagesize($img);
+            if (!$check) {
+                $form->setError("img", "* Netinkamas paveikslėlio formatas<br>");
+            }
+
+            if ($form->num_errors > 0) {
+                $_SESSION['value_array'] = $_POST;
+                $_SESSION['error_array'] = $form->getErrorArray();
+
+                header("Location: " . $session->referrer);
+                exit();
+            }
+
             $img_content = file_get_contents($img);
             $res = $database->createCompetition($topic, $start_date, $end_date, $img_content);
 

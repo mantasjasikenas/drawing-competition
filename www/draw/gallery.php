@@ -88,7 +88,7 @@ if ($session->logged_in && ($session->isParticipant() || $session->isEvaluator()
 
                         echo '</div>';
                     } else {
-                        echo '<h2 style="margin-top: unset; color: red; text-align: center">Nėra pateiktų paveikslėlių</h2>';
+                        echo '<h2 style="margin-top: unset; color: red; text-align: center">Nėra įvertintų paveikslėlių!</h2>';
                     }
 
                     ?>

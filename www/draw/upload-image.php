@@ -116,8 +116,8 @@ if ($session->logged_in && $session->isParticipant()) {
                         echo '<div style="display: flex; flex-wrap: wrap; justify-content: center">';
 
                         foreach ($images as $image) {
-                            echo '<div style="margin: 10px; width: 320px">';
-                            echo '<img class="' . $styleClass . '"  style="width: 100%; height: 100%; object-fit: cover" src="data:image/jpeg;base64,' . base64_encode($image['image']) . '"/>';
+                            echo '<div style="margin: 10px;">';
+                            echo '<img class="' . $styleClass . '"  style="height: 150px; width: auto;" src="data:image/jpeg;base64,' . base64_encode($image['image']) . '"/>';
                             echo '</div>';
                         }
 

@@ -6,7 +6,7 @@
 ├── docker-compose.yml
 ├── Dockerfile
 ├── dump
-│   └── db.sql
+│   └── db_clean.sql
 ├── sessions
 └── www
     └── index.php

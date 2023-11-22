@@ -33,6 +33,22 @@ if ($form->num_errors > 0) {
 
     header("Location: " . $session->referrer);
 } else {
+    // Check if image file is an actual image or fake image
+    foreach ($_FILES['images']['name'] as $key => $value) {
+        $check = getimagesize($_FILES['images']['tmp_name'][$key]);
+        if (!$check) {
+            $form->setError("images", "* Netinkamas paveikslėlio formatas<br>");
+        }
+    }
+
+    if ($form->num_errors > 0) {
+        $_SESSION['value_array'] = $_POST;
+        $_SESSION['error_array'] = $form->getErrorArray();
+
+        header("Location: " . $session->referrer);
+        exit();
+    }
+
     // Make connection
     $conn = $database->connection;
 
