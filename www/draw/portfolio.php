@@ -60,7 +60,7 @@ if ($session->logged_in && $session->isParticipant()
 
                             echo '<div style="text-align: center; border: solid 2px black; border-radius: 5px; padding: 5px; background-color: #c3fdb8;">';
 
-                            echo '<img class="' . $style . '" src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 200px; width: auto">';
+                            echo '<img class="' . $style . '" src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px; width: auto">';
 
                             if (!$score || $score == 0) {
                                 $score = '-';

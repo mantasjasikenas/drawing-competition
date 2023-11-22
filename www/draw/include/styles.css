@@ -1,3 +1,5 @@
+@import url('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
+
 table.meniu {
     text-align: left;
     background-color: #F8E9FC;
@@ -40,6 +42,38 @@ input.s1 {
     text-align: left;
 }
 
+.info-msg,
+.success-msg,
+.warning-msg,
+.error-msg {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 3px 3px 3px 3px;
+    width: fit-content;
+    text-align: center;
+}
+.info-msg {
+    color: #059;
+    background-color: #BEF;
+    border: 1px solid #059;
+}
+.error-msg {
+    color: #D8000C;
+    background-color: #FFBABA;
+    border : 1px solid #D8000C;
+}
+.success-msg {
+    color: #270;
+    background-color: #DFF2BF;
+    border: 1px solid #270;
+}
+.warning-msg {
+    color: #9F6000;
+    background-color: #FEEFB3;
+    border: 1px solid #9F6000;
+}
+
+
 #myImg {
     /*border-radius: 5px;*/
     cursor: pointer;
@@ -70,8 +104,8 @@ input.s1 {
 .modal-content {
     margin: auto;
     display: block;
-    /*width: 75%;*/
-   max-width: 75%;
+    max-width: 75%;
+    max-height: 75%;
 }
 
 /* Caption of Modal Image */

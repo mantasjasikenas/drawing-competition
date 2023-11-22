@@ -37,49 +37,56 @@ if ($session->logged_in && $session->isParticipant()) {
                     </tr>
                 </table>
                 <br>
-                <div style="text-align: center;">
-                    <h1>Įkelti paveikslėlį</h1>
+                <div style="display: flex; flex-wrap: wrap; flex-direction: column; align-items: center;">
+                    <h1 style="margin-bottom: unset;">Įkelti paveikslėlį</h1>
                     <?php
 
                     if (isset($_SESSION['message'])) {
-                        echo '<h3 style="color: darkseagreen">' . $_SESSION['message'] . '</h3>';
+                        echo '<div class="success-msg">
+                                <i class="fa fa-check"></i>' . $_SESSION['message'] . '
+                             </div>';
+
                         unset($_SESSION['message']);
                     }
 
-                    ?>
+                    if ($form->num_errors > 0) {
+                        echo '<div class="error-msg">
+                            <i class="fa fa-check"></i>' . 'Įvyko klaida!' . '
+                         </div>';
+                    }
 
+
+                    ?>
                 </div>
                 <br>
 
                 <div style="padding: 10px; text-align: center">
 
-                        <?php
-                        $competitions = $database->getAvailableCompetitions();
+                    <?php
+                    $competitions = $database->getAvailableCompetitions();
 
-                        if ($competitions && count($competitions) > 0) {
-                            echo '<form enctype="multipart/form-data" method="post" action="actions/handle-upload.php">';
+                    if ($competitions && count($competitions) > 0) {
+                        echo '<form enctype="multipart/form-data" method="post" action="actions/handle-upload.php">';
 
-                            echo '<label for="competition">Pasirinkite konkursą</label><br>';
-                            echo '<select name="competition" id="competition">';
-                            foreach ($competitions as $competition) {
-//                                echo '<option value="' . $competition['id'] . '">' . $competition['topic'] . ' ' . $competition['start_date'] . ' - ' . $competition['end_date'] . '</option>';
-                                echo '<option value="' . $competition['id'] . '" data-image="' . base64_encode($competition['image']) . '">' . $competition['topic'] . ' ' . $competition['start_date'] . ' - ' . $competition['end_date'] . '</option>';
+                        echo '<label for="competition">Pasirinkite konkursą</label><br>';
+                        echo '<select name="competition" id="competition">';
+                        foreach ($competitions as $competition) {
+                            echo '<option value="' . $competition['id'] . '" data-image="' . base64_encode($competition['image']) . '">' . $competition['topic'] . ' ' . $competition['start_date'] . ' - ' . $competition['end_date'] . '</option>';
 
-                            }
-                            echo '</select><br><br>';
+                        }
+                        echo '</select><br><br>';
 
 //                            show competion image
-                            echo '<img id="competition_image" style="height: 160px; object-fit: cover" src="data:image/jpeg;base64,' . base64_encode($competitions[0]['image']) . '"/><br><br>';
+                        echo '<img id="competition_image" style="height: 160px; object-fit: cover" src="data:image/jpeg;base64,' . base64_encode($competitions[0]['image']) . '"/><br><br>';
 
-                            echo '<label for="style">Pasirinkite paveikslėlių stilių</label><br>';
-                            echo '<select name="style[]" id="style" multiple>';
-                            //                        echo '<option value="default">Numatytasis</option>';
-                            echo '<option value="border">Rėmelis</option>';
-                            echo '<option value="rounded">Apvalūs kampai</option>';
-                            echo '<option value="oval">Ovalas</option>';
-                            echo '</select><br><br>';
+                        echo '<label for="style">Pasirinkite paveikslėlių stilių</label><br>';
+                        echo '<select name="style[]" id="style" multiple>';
+                        echo '<option value="border">Rėmelis</option>';
+                        echo '<option value="rounded">Apvalūs kampai</option>';
+                        echo '<option value="oval">Ovalas</option>';
+                        echo '</select><br><br>';
 
-                            echo '<label for="files">Pasirinkite piešinių nuotraukas</label><br>
+                        echo '<label for="files">Pasirinkite piešinių nuotraukas</label><br>
                             <input name="images[]" multiple type="file" id="file[]" accept="image/*">
                             <br> ' . $form->error("images") . '
                             <!--oninvalid="this.setCustomValidity("Privaloti pateikti bent vieną piešinį.")"
@@ -93,10 +100,10 @@ if ($session->logged_in && $session->isParticipant()) {
                             <input type="submit" value="Pateikti">
                     </form>';
 
-                        } else {
-                            echo '<h2 style="margin-top: unset; color: red; text-align: center">Šiuo metu nevyksta nei vienas konkursas!</h2>';
-                        }
-                        ?>
+                    } else {
+                        echo '<h2 style="margin-top: unset; color: red; text-align: center">Šiuo metu nevyksta nei vienas konkursas!</h2>';
+                    }
+                    ?>
 
                     <br><br>
 

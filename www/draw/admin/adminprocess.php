@@ -59,6 +59,7 @@ class AdminProcess
             header("Location: " . $session->referrer);
         } /* Update user level */ else {
             $database->updateUserField($subuser, "userlevel", (int)$_POST['updlevel']);
+            $_SESSION['message'] = "Vartotojo lygis atnaujintas sėkmingai!";
             header("Location: " . $session->referrer);
         }
     }
@@ -80,6 +81,7 @@ class AdminProcess
         } /* Delete user from database */ else {
             $q = "DELETE FROM " . TBL_USERS . " WHERE username = '$subuser'";
             $database->query($q);
+            $_SESSION['message'] = "Naudotojas ištrintas sėkmingai!";
             header("Location: " . $session->referrer);
         }
     }
@@ -97,6 +99,7 @@ class AdminProcess
         $q = "DELETE FROM " . TBL_USERS . " WHERE timestamp < $inact_time "
             . "AND userlevel != " . ADMIN_LEVEL;
         $database->query($q);
+        $_SESSION['message'] = "Neaktyvūs naudotojai ištrinti sėkmingai!";
         header("Location: " . $session->referrer);
     }
 
@@ -117,12 +120,13 @@ class AdminProcess
             $_SESSION['value_array'] = $_POST;
             $_SESSION['error_array'] = $form->getErrorArray();
             header("Location: " . $session->referrer);
-        } /* Ban user from member system */ else {
-            $q = "DELETE FROM " . TBL_USERS . " WHERE username = '$subuser'";
-            $database->query($q);
+        } else {
+//            $q = "DELETE FROM " . TBL_USERS . " WHERE username = '$subuser'";
+//            $database->query($q);
 
             $q = "INSERT INTO " . TBL_BANNED_USERS . " VALUES ('$subuser', $session->time)";
             $database->query($q);
+            $_SESSION['message'] = "Naudotojas užblokuotas sėkmingai!";
             header("Location: " . $session->referrer);
         }
     }
@@ -146,6 +150,7 @@ class AdminProcess
         } /* Delete user from database */ else {
             $q = "DELETE FROM " . TBL_BANNED_USERS . " WHERE username = '$subuser'";
             $database->query($q);
+            $_SESSION['message'] = "Naudotojas atblokuotas sėkmingai!";
             header("Location: " . $session->referrer);
         }
     }
@@ -160,23 +165,23 @@ class AdminProcess
         $img = $_FILES['img']['tmp_name'];
 
         if (!$img) {
-            $form->setError("img", "* Nepasirinktas paveikslėlis<br>");
+            $form->setError("img", "Nepasirinktas paveikslėlis!<br>");
         }
 
         if (!$topic) {
-            $form->setError("topic", "* Nepasirinkta konkurso tema<br>");
+            $form->setError("topic", "Nepasirinkta konkurso tema!<br>");
         }
 
         if (!$start_date) {
-            $form->setError("start_date", "* Nepasirinkta konkurso pradžios data<br>");
+            $form->setError("start_date", "Nepasirinkta konkurso pradžios data!<br>");
         }
 
         if (!$end_date) {
-            $form->setError("end_date", "* Nepasirinkta konkurso pabaigos data<br>");
+            $form->setError("end_date", "Nepasirinkta konkurso pabaigos data!<br>");
         }
 
         if ($start_date > $end_date) {
-            $form->setError("end_date", "* Konkurso pabaigos data negali būti ankstesnė nei pradžios data<br>");
+            $form->setError("end_date", "Konkurso pabaigos data negali būti ankstesnė nei pradžios data<br>");
         }
 
         if ($form->num_errors > 0) {
@@ -187,7 +192,9 @@ class AdminProcess
             $res = $database->createCompetition($topic, $start_date, $end_date, $img_content);
 
             if (!$res) {
-                $form->setError("topic", "* Nepavyko sukurti konkurso<br>");
+                $_SESSION['error'] = "Nepavyko sukurti konkurso!";
+            } else {
+                $_SESSION['message'] = "Konkursas sukurtas sėkmingai!";
             }
         }
 
@@ -233,7 +240,9 @@ class AdminProcess
             $res = $database->query($q);
 
             if (!$res) {
-                $form->setError("delcomppaint", "* Nepavyko ištrinti paveikslėlių<br>");
+                $_SESSION['error'] = "Nepavyko ištrinti paveikslėlių!";
+            } else {
+                $_SESSION['message'] = "Paveikslėliai ištrinti sėkmingai!";
             }
 
         }
@@ -253,7 +262,9 @@ class AdminProcess
             $res = $database->query($q);
 
             if (!$res) {
-                $form->setError("delcomp", "* Nepavyko ištrinti konkurso<br>");
+                $_SESSION['error'] = "Nepavyko ištrinti konkurso!";
+            } else {
+                $_SESSION['message'] = "Konkursas ištrintas sėkmingai!";
             }
 
         }
@@ -287,7 +298,9 @@ class AdminProcess
         $id = stripslashes($id);
 
         if (!$database->query("DELETE FROM reports WHERE id = '$id'")) {
-            $form->setError("global", "* Nepavyko ištrinti pranešimo<br>");
+            $_SESSION['error'] = "Nepavyko ištrinti pranešimo!";
+        } else {
+            $_SESSION['message'] = "Pranešimas ištrintas sėkmingai!";
         }
 
         header("Location: " . $session->referrer);
@@ -295,14 +308,17 @@ class AdminProcess
 
     function deletePainting()
     {
-        global $session, $database, $form;
+        global $session, $database;
 
         $id = $_REQUEST['id'];
         $id = stripslashes($id);
 
         if (!$database->query("DELETE FROM paintings WHERE id = '$id'")) {
-            $form->setError("global", "* Nepavyko ištrinti paveikslėlio<br>");
+            $_SESSION['error'] = "Nepavyko ištrinti paveikslėlio!";
+        } else {
+            $_SESSION['message'] = "Paveikslėlis ištrintas sėkmingai!";
         }
+
 
         header("Location: " . $session->referrer);
     }

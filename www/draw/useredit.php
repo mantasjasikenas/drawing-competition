@@ -38,7 +38,12 @@ if ($session->logged_in) {
                 <?php
                 if (isset($_SESSION['useredit'])) {
                     unset($_SESSION['useredit']);
-                    echo "<p><b>$session->username</b>, Jūsų paskyra buvo sėkmingai atnaujinta.<br><br>";
+
+                    echo "<div class='success-msg' style='margin: auto'>
+                            <i class='fa fa-check'></i> $session->username</b>, Jūsų paskyra buvo sėkmingai atnaujinta.
+                          </div>";
+
+//                    echo "<p><b>$session->username</b>, Jūsų paskyra buvo sėkmingai atnaujinta.<br><br>";
                 } else {
                     echo "<div align=\"center\">";
                     if ($form->num_errors > 0) {

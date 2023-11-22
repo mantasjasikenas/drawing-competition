@@ -83,9 +83,10 @@ function displayCompetitions()
     $num_rows = mysqli_num_rows($result);
 
     if (!$result || ($num_rows < 0)) {
-        echo "Error displaying info";
+        echo "Negalima atvaizduoti informacijos.";
         return;
     }
+
 
     if ($num_rows == 0) {
         echo "Lentelė tuščia.";
@@ -133,9 +134,9 @@ function displayCompetitions()
 
             </tr>\n";
     }
-    echo "</table><br>\n";
+    echo "</table>";
     echo '<div id="myModal" class="modal">
-            <img class="modal-content" id="img01">
+            <img class="modal-content" id="img01" style="margin: auto">
           </div>';
 
     echo '<script>
@@ -270,6 +271,14 @@ function ViewActiveUsers()
 }
 
 if (!$session->isAdmin()) {
+    if (isset($_SESSION['message'])) {
+        unset($_SESSION['message']);
+    }
+
+    if (isset($_SESSION['error'])) {
+        unset($_SESSION['error']);
+    }
+
     header("Location: ../index.php");
 } else { //Jei administratorius
     date_default_timezone_set("Europe/Vilnius");
@@ -304,11 +313,36 @@ if (!$session->isAdmin()) {
                     </tr>
                 </table>
                 <br>
-                <?php
-                if ($form->num_errors > 0) {
-                    echo "<font size=\"4\" color=\"#ff0000\">" . "!*** Įvyko klaida!</font><br><br>";
-                }
-                ?>
+
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center">
+                    <h1 style="margin-bottom: unset;">Administratoriaus sąsaja</h1>
+                    <?php
+                    if (isset($_SESSION['message'])) {
+                        echo '<div class="success-msg">
+                                <i class="fa fa-check"></i>' . $_SESSION['message'] . '
+                              </div>';
+
+                        unset($_SESSION['message']);
+                    }
+
+                    if (isset($_SESSION['error'])) {
+                        echo '<div class="error-msg">
+                                <i class="fa fa-check"></i>' . $_SESSION['error'] . '
+                              </div>';
+
+                        unset($_SESSION['error']);
+                    }
+
+                    if ($form->num_errors > 0) {
+                        echo '<div class="error-msg">
+                            <i class="fa fa-check"></i>' . 'Įvyko klaida!' . '
+                         </div>';
+                    }
+                    ?>
+
+                </div>
+
+
                 <table style=" text-align:left;" border="0" cellspacing="5" cellpadding="5">
                     <tr>
                         <td>

@@ -9,6 +9,7 @@ if ($session->logged_in && $session->isEvaluator()) {
         <title>Įvertinti paveikslėlį</title>
         <link href="include/styles.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="include/style.php" media="screen">
+        <link href="include/styles.css" rel="stylesheet" type="text/css"/>
         <style>
             a.left-arrow {
                 color: black;
@@ -63,12 +64,15 @@ if ($session->logged_in && $session->isEvaluator()) {
                     </tr>
                 </table>
                 <br>
-                <div style="text-align: center;">
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center">
                     <h1>Įvertinti paveikslėlį</h1>
 
                     <?php
                     if (isset($_SESSION['message'])) {
-                        echo "<h4 style='color: #8fbc8f'>" . $_SESSION['message'] . "</h4>";
+                        echo '<div class="success-msg">
+                            <i class="fa fa-check"></i>' . $_SESSION['message'] . '
+                        </div>';
+
                         unset($_SESSION['message']);
                     }
                     ?>

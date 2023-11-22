@@ -14,7 +14,6 @@ $style = $_POST['style'];
 $comment = $_POST['comment'];
 
 
-
 if ($_FILES['images']['name'][0] == "") {
     $form->setError("images", "* Nepasirinktas paveikslėlis<br>");
 }
@@ -49,13 +48,15 @@ if ($form->num_errors > 0) {
 
     $style = "";
 
-    foreach ($styles as $style_item) {
-        $style .= $style_item . " ";
+    if ($styles && is_array($styles)) {
+        foreach ($styles as $s) {
+            $style .= $s . " ";
+        }
     }
 
-    if ($style == "default") {
-        $style = "";
-    }
+//    if ($style || $style == "default") {
+//        $style = "";
+//    }
 
     $_SESSION['style'] = $style;
 
@@ -64,9 +65,6 @@ if ($form->num_errors > 0) {
         VALUES ('" . $_POST['comment'] . "', '" . $style . "', NOW(), '" . $session->id . "', '" . $competition_id . "')";
     $statement = $conn->prepare($sql);
     $statement->execute();
-
-//    echo error
-    echo mysqli_error($conn);
 
     $upload_id = mysqli_insert_id($conn);
 

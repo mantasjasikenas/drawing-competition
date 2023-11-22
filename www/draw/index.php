@@ -64,9 +64,13 @@ include("include/session.php");
                 //Jei atsiranda klaidų, rodomi pranešimai.
             } else {
                 echo "<div align=\"center\">";
+
                 if ($form->num_errors > 0) {
-                    echo "<font size=\"3\" color=\"#ff0000\">Klaidų: " . $form->num_errors . "</font>";
+                    echo '<div class="error-msg">
+                            <i class="fa fa-check"></i>' . 'Įvyko klaida!' . '
+                         </div>';
                 }
+
                 echo "<table class=\"center\"><tr><td>";
                 include("include/loginForm.php");
                 echo "</td></tr></table></div><br></td></tr>";

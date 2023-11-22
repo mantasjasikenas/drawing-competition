@@ -52,6 +52,8 @@ if ($session->logged_in && ($session->isParticipant() || $session->isEvaluator()
                             $score = $row['score'];
                             $style = $row['style'];
                             $username = $row['username'];
+                            $birth_date = $row['birth_date'];
+                            $pos = $row['place'] . " vieta";
 
                             if ($score) {
                                 $score = round($score, 2);
@@ -61,13 +63,25 @@ if ($session->logged_in && ($session->isParticipant() || $session->isEvaluator()
 
 
                             echo '<div style="text-align: center; border: solid 2px black; border-radius: 5px; padding: 5px; background-color: #c3fdb8;">';
+
+                            echo '<h2 style="margin-top: 3px; margin-bottom: 3px">' . $pos . '</h2>';
+
                             echo '<img class="' . $style . '" src="data:image/jpeg;base64,' . base64_encode($imageData) . '" alt="Uploaded Image" style="height: 150px;">';
 
+                            echo '<div style="display: flex; justify-content: center; flex-direction: column; margin-top: 6px; margin-bottom: 6px">';
                             echo '<h4 style="margin-top: unset; margin-bottom: unset">Įvertinimas</h4>';
-                            echo '<label style="margin-top: unset; margin-bottom: unset">' . $score . '</label>';
+                            echo '<label style="margin-top: 0; margin-bottom: 0;">' . $score . '</label>';
+                            echo '</div>';
 
+                            echo '<div style="display: flex; justify-content: center; flex-direction: column; margin-top: 6px; margin-bottom: 6px">';
                             echo '<h4 style="margin-top: unset; margin-bottom: unset">Autorius</h4>';
                             echo '<label style="margin-top: unset; margin-bottom: unset">' . $username . '</label>';
+                            echo '</div>';
+
+                            echo '<div style="display: flex; justify-content: center; flex-direction: column; margin-top: 6px; margin-bottom: 6px">';
+                            echo '<h4 style="margin-top: unset; margin-bottom: unset">Gimimo data</h4>';
+                            echo '<label style="margin-top: unset; margin-bottom: unset">' . $birth_date . '</label>';
+                            echo '</div>';
 
                             echo '</div>';
                         }

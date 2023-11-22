@@ -10,6 +10,7 @@ if ($session->logged_in && $session->isAdmin()
         <title>Pranešimai</title>
         <link href="include/styles.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="include/style.php" media="screen">
+        <link href="include/styles.css" rel="stylesheet" type="text/css"/>
 
     </head>
     <body>
@@ -35,11 +36,23 @@ if ($session->logged_in && $session->isAdmin()
                 </table>
                 <br>
                 <div style="text-align: center;">
-                    <h1>Pranešimai apie netinkamus piešinius</h1>
+                    <div style="text-align: center; display: flex; flex-direction: column; align-items: center">
+                        <h1 style="margin-bottom: unset;">Pranešimai apie netinkamus piešinius</h1>
+
+                        <?php
+                        if (isset($_SESSION['message'])) {
+                            echo '<div class="success-msg">
+                            <i class="fa fa-check"></i>' . $_SESSION['message'] . '
+                        </div>';
+
+                            unset($_SESSION['message']);
+                        }
+                        ?>
+                    </div>
 
                     <?php
                     echo '<div style="text-align: center;">';
-                    echo '<h2 style="margin-top: unset; color: green;">' . $form->error("global") . '</h2>';
+                    echo '<h3 style="margin-top: unset; color: red;">' . $form->error("global") . '</h3>';
                     echo '</div>';
                     ?>
                 </div>

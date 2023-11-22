@@ -355,7 +355,8 @@ class MySQLDB
                    avg_score AS score,
                    image,
                    style,
-                   username
+                   username,
+                   birth_date
             FROM (SELECT fk_painting,
                          (SUM(composition +
                               colorfulness +
@@ -376,8 +377,16 @@ class MySQLDB
         if (!$result || (mysqli_num_rows($result) < 1)) {
             return NULL;
         }
+
         /* Return result array */
-        return mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $arr = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+        $position = 1;
+        foreach ($arr as $key => $value) {
+            $arr[$key]['place'] = $position++;
+        }
+
+        return $arr;
     }
 
     function getUnratedPaintingsId($userid): ?array
@@ -457,7 +466,7 @@ class MySQLDB
         return mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
-    function getUnsolvedReports (): ?array
+    function getUnsolvedReports(): ?array
     {
         $q = "SELECT reports.id          AS report_id,
                        reports.fk_user     AS user_id,
