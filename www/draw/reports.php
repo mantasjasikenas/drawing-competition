@@ -10,6 +10,7 @@ if ($session->logged_in && $session->isAdmin()
         <title>Pranešimai</title>
         <link href="include/styles.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="include/style.php" media="screen">
+
     </head>
     <body>
     <table class="center">
@@ -54,7 +55,8 @@ if ($session->logged_in && $session->isAdmin()
                         echo "<table align=\"left\" border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n";
 
                         echo "<tr>
-                                <td><b>Id</b></td>
+                                <td><b>Pranešimo id</b></td>
+                                <td><b>Piešinio id</b></td>
                                 <td><b>Nuotrauka</b></td>
                                 <td><b>Priežastis</b></td>
                                 <td><b>Vartototojo vardas</b></td>
@@ -68,6 +70,7 @@ if ($session->logged_in && $session->isAdmin()
                             $cause = $row['cause'];
                             $user_id = $row['user_id'];
                             $username = $row['username'];
+                            $styleCss = $row['style'];
 
                             if (!$cause) {
                                 $cause = "Nenurodyta";
@@ -75,7 +78,8 @@ if ($session->logged_in && $session->isAdmin()
 
                             echo "<tr>
                                     <td>$report_id</td>
-                                    <td><img style='height: 40px; object-fit: cover' src='data:image/jpeg;base64," . base64_encode($image) . "'/></td>
+                                    <td>$painting_id</td>
+                                    <td><img class='$styleCss myImg' id='myImg' style='height: 40px; object-fit: cover ' src='data:image/jpeg;base64," . base64_encode($image) . "'/></td>
                                     <td>$cause</td>
                                     <td>$username</td>
                                     <td>
@@ -106,10 +110,63 @@ if ($session->logged_in && $session->isAdmin()
             </td>
         </tr>
     </table>
+
+    <div id="myModal" class="modal">
+        <img class="modal-content" id="img01">
+    </div>
+
+    <script>
+        const modal = document.getElementById('myModal');
+        const modalImg = document.getElementById("img01");
+        const images = document.querySelectorAll('.myImg'); // Use class selector instead of id
+
+        images.forEach(img => {
+            img.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+                modalImg.alt = this.alt;
+
+                // if contains class 'oval' then add class 'oval' to modalImg
+                if (this.className.includes('oval')) {
+                    modalImg.className += " oval";
+                }
+
+                if (this.className.includes('border')) {
+                    modalImg.className += " border";
+                }
+
+                if (this.className.includes('rounded')) {
+                    modalImg.className += " rounded";
+                }
+
+                // modalImg.className += this.className;
+            };
+        });
+
+        modal.onclick = function () {
+            modalImg.className += " out";
+            setTimeout(function () {
+                modal.style.display = "none";
+                modalImg.className = "modal-content";
+            }, 400);
+        };
+
+        window.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                modalImg.className += " out";
+                setTimeout(function () {
+                    modal.style.display = "none";
+                    modalImg.className = "modal-content";
+                }, 400);
+            }
+        })
+
+    </script>
+
+
     </body>
     </html>
     <?php
-    //Jei vartotojas neprisijungęs, užkraunamas pradinis puslapis  
 } else {
     header("Location: index.php");
 }

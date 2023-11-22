@@ -116,7 +116,7 @@ function displayCompetitions()
 
         echo "<tr>
                 <td>$id</td>
-                <td><img style='height: 40px; object-fit: cover' src='data:image/jpeg;base64," . base64_encode($image) . "'/></td>
+                <td><img class='myImg' id='myImg' style='height: 40px; object-fit: cover' src='data:image/jpeg;base64," . base64_encode($image) . "'/></td>
                 <td>$topic</td>
                 <td>$creation_date</td>
                 <td>$start_date</td>
@@ -134,6 +134,43 @@ function displayCompetitions()
             </tr>\n";
     }
     echo "</table><br>\n";
+    echo '<div id="myModal" class="modal">
+            <img class="modal-content" id="img01">
+          </div>';
+
+    echo '<script>
+        const modal = document.getElementById("myModal");
+        const modalImg = document.getElementById("img01");
+        const captionText = document.getElementById("caption");
+        const images = document.querySelectorAll(".myImg");
+
+        images.forEach(img => {
+            img.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+                modalImg.alt = this.alt;
+                captionText.innerHTML = this.alt;
+            };
+        });
+
+        modal.onclick = function () {
+            modalImg.className += " out";
+            setTimeout(function () {
+                modal.style.display = "none";
+                modalImg.className = "modal-content";
+            }, 400);
+        };
+        
+        window.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") {
+                modalImg.className += " out";
+                setTimeout(function () {
+                    modal.style.display = "none";
+                    modalImg.className = "modal-content";
+                }, 400);
+            }
+        })
+    </script>';
 }
 
 function mysqli_result($res, $row, $field = 0)

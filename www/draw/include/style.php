@@ -8,8 +8,6 @@ $border = '1px solid';
 ?>
 
 .oval {
-width: 320px;
-height: 160px;
 background: #a84909;
 border-radius: 50%;
 }

@@ -465,10 +465,12 @@ class MySQLDB
                        reports.creation_date,
                        reports.cause       AS cause,
                        users.username,
-                       paintings.image     AS image
+                       paintings.image     AS image,
+                       uploads.style       AS style
                 FROM reports
                          INNER JOIN users ON reports.fk_user = users.id
-                         INNER JOIN paintings ON reports.fk_painting = paintings.id";
+                         INNER JOIN paintings ON reports.fk_painting = paintings.id
+                         INNER JOIN uploads ON uploads.id = fk_upload";
         $result = mysqli_query($this->connection, $q);
 
         if (!$result || (mysqli_num_rows($result) < 1)) {
