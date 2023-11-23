@@ -24,11 +24,11 @@ include("include/session.php");
             if ($session->logged_in) {
                 include("include/meniu.php");
                 ?>
-                <div style="text-align: center;">
+                <div style="text-align: center; display: flex; flex-direction: column">
                     <br><br>
                     <h1>Pagrindinis puslapis</h1>
 
-                    <div style="padding: 5px 60px; background-color: #c3fdb8; width: fit-content; margin: auto; border: solid 2px black; border-radius: 5px;">
+                    <div style="padding: 5px 60px; background-color: #c3fdb8; margin: auto; border: solid 2px black; border-radius: 5px;">
                         <h3 style="margin-bottom: 0">Darbo pavadinimas</h3>
                         <p style="margin-top: 6px">Piešinių konkursas</p>
 
@@ -71,7 +71,7 @@ include("include/session.php");
                          </div>';
                 }
 
-                echo "<table class=\"center\"><tr><td>";
+                echo "<table><tr><td>";
                 include("include/loginForm.php");
                 echo "</td></tr></table></div><br></td></tr>";
             }

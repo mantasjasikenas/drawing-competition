@@ -1,7 +1,7 @@
 <?php
 if (isset($form) && isset($session) && !$session->logged_in) {
     ?>
-    <div style="width: fit-content; margin: 0 auto;">
+    <div>
         <form action="process.php" method="POST" class="login">
             <center style="font-size:18pt;"><b>Prisijungimas</b></label></center>
             <p style="text-align:left;">Vartotojo vardas:<br>
