@@ -50,6 +50,8 @@ input.s1 {
     padding: 10px;
     border-radius: 3px 3px 3px 3px;
     width: fit-content;
+    /*noinspection CssInvalidPropertyValue*/
+    width: -moz-fit-content;
     text-align: center;
 }
 .info-msg {
